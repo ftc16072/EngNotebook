@@ -1,6 +1,8 @@
 import cherrypy
 from mako.lookup import TemplateLookup
-from yaml import load, dump
+import yaml
+import datetime
+from minutes import Minutes
 
 class FtcNotebook(object):
     
@@ -12,13 +14,20 @@ class FtcNotebook(object):
 
     @cherrypy.expose
     def index(self):
-        member_list = load(open("members.yaml"))
-        print(member_list)
-        tasks = ["test1", "Test2"]
+        member_list = yaml.safe_load(open("data/members.yaml"))
+        tasks = yaml.safe_load(open("data/tasks.yaml"))
         return self.template('form.mako', members=member_list, tasks=tasks)
 
     @cherrypy.expose
     def addEntry(self, Team_member, Task, Accomplished, Learning, Next_steps, Photo):
-        return Team_member, Task, Accomplished, Learning, Next_steps, Photo
+        print("Photo", Photo)
+        now = datetime.datetime.now()
+        date = str(now.month) + "." + str(now.day) +"."+ str(now.year)
+        Entry = Minutes('data/9.2.2019.yaml')
+        Entry.addEntry(Team_member, Task, Accomplished, Learning, Next_steps, Photo)
+        return "Thanks!"
+            
+        
+        
 
 cherrypy.quickstart(FtcNotebook(), config='development.conf')

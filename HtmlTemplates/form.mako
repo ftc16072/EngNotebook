@@ -1,7 +1,7 @@
 <%def name="title()">Test </%def>
 <%def name="head()"></%def>
 <%inherit file = "base.mako"/>
-<form action="addEntry">
+<form action="addEntry" method="post" enctype="multipart/form-data">
     <label for="Team_member">Your Name:</label> 
     <select name ="Team_member">
         % for member in members:
@@ -30,7 +30,7 @@
     <br/>
     <label for="Photo">Photo?</label>
     <br/>
-    <input name="Photo" type="file" accept="image/*">
+    <input name="Photo" type="file" accept="image/*"/>
     <br/><br/>
     <input type="submit" value="Submit">
 
