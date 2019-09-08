@@ -14,25 +14,37 @@ class Minutes():
             pass
         
     def addEntry(self, team_member, task, accomplished, learning, next_steps, photo):
-        unique_filename = str(uuid.uuid4()) + photo.filename
-        Entry = {
-            'team_member':team_member,
-            'task':task,
-            'accomplished':accomplished,
-            'learning':learning,
-            'next_steps':next_steps,
-            'photo':unique_filename
-        }
-        self.entries.append(Entry)
-        print(self.entries)
-        print(photo)
-        with open("data/" + unique_filename, "wb") as outFile:
-            while True:
-                data = photo.file.read(8192)
-                if not data:
-                    break
-                outFile.write(data)
-
+        print(photo.filename)
+        if photo.filename:
+            unique_filename = str(uuid.uuid4()) + photo.filename
+            Entry = {
+                'team_member':team_member,
+                'task':task,
+                'accomplished':accomplished,
+                'learning':learning,
+                'next_steps':next_steps,
+                'photo':unique_filename
+            }
+            self.entries.append(Entry)
+            print(self.entries)
+            print(photo)
+            with open("data/" + unique_filename, "wb") as outFile:
+                while True:
+                    data = photo.file.read(8192)
+                    if not data:
+                        break
+                    outFile.write(data)
+        else:
+            Entry = {
+                'team_member':team_member,
+                'task':task,
+                'accomplished':accomplished,
+                'learning':learning,
+                'next_steps':next_steps,
+                'photo': 'Null'
+            }
+            self.entries.append(Entry)
+            print(self.entries)
 
         with open(self.filename, "w") as file:
             print(yaml.dump(self.entries))
