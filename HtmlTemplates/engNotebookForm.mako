@@ -1,6 +1,7 @@
 <%def name="title()">Test </%def>
 <%def name="head()"></%def>
 <%inherit file = "base.mako"/>
+<a href="tasksForm">Update Tasks<a>
 <form action="addEntry" method="post" enctype="multipart/form-data">
     <label for="Team_member">Your Name:</label> 
     <select name ="Team_member">
@@ -12,7 +13,9 @@
     <label for="Task">What did you work on?</label> <br/>
     <select name ="Task">
         % for task in tasks:
-            <option>${task}</option>
+            % if task['stage'] == 'Working On':
+                <option>${task['name']}</option>
+            % endif
         % endfor
     </select>
     <br/>
