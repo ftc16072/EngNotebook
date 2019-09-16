@@ -2,6 +2,7 @@ import cherrypy
 from mako.lookup import TemplateLookup
 import yaml
 import datetime
+import glob
 from minutes import Minutes
 from tasks import Tasks
 
@@ -27,8 +28,8 @@ class FtcNotebook(object):
     def addEntry(self, Team_member, Task, Accomplished, Learning, Next_steps, Photo):
         print("Photo", Photo)
         now = datetime.datetime.now()
-        date = str(now.month) + "." + str(now.day) +"."+ str(now.year)
-        Entry = Minutes('data/entries/'+ date + '.yaml')
+        date = now.strftime("%Y-%m-%d")
+        Entry = Minutes('data/'+ date + '.yaml')
         Entry.addEntry(Team_member, Task, Accomplished, Learning, Next_steps, Photo)
         return self.newEntry()
     
@@ -55,14 +56,12 @@ class FtcNotebook(object):
 
     @cherrypy.expose
     def viewEntries(self):
-        return "<a href=viewEntry?filename=data/entries/9.8.2019.yaml>9.8.19</a>"
+        files = sorted(glob.iglob('data/[0-9]*.yaml'))
+        return self.template('veiwEntries.mako', files=files)
 
     @cherrypy.expose
     def viewEntry(self, filename):
-        entry = Minutes(filename)
-        tasksDict = entry.getTasksDictionary()
-        print(tasksDict)
-        return self.template('viewEntries.mako', tasksDict=tasksDict)
+        return self.template('viewEntry.mako', minutes=Minutes(filename), pageTitle=filename[5:-5])
         
         
 

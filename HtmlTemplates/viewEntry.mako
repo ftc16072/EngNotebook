@@ -3,6 +3,7 @@
 <%inherit file = "base.mako"/>
 <a href="index">Back</a> <br>
 <body>
+    <h1>${pageTitle}</h1>
     <table>
         <tr>
             <th>Task</th>
@@ -13,7 +14,7 @@
             <th>Picture</th>
         </tr>
         
-        % for item, entries in tasksDict.items():
+        % for item, entries in minutes.getTasksDictionary().items():
             % for entry in entries:
                 <tr>
                     <td>${item}</td>
@@ -21,7 +22,9 @@
                     <td>${entry['accomplished']}</td>
                     <td>${entry['learning']}</td>
                     <td>${entry['next_steps']}</td>
-                    <td>${entry['photo']}</td>
+                % if entry['photo']:
+                    <td><IMG SRC="${minutes.getPhotoLink(entry['photo'])}" ALT="Photo"/></td>
+                % endif
             % endfor
             </tr>
         % endfor
