@@ -22,7 +22,8 @@ class Tasks():
             file = open("data/tasks.yaml", "r")
             yamlData = yaml.load(file)
             self.tasklist = yamlData
-            self.tasklist.append({taskName:{'stage':stage}})
+            self.tasklist.append({'name':taskName, 'stage':stage})
+            print("---",self.tasklist)
             fileWrite = open("data/tasks.yaml", "w")
             yaml.dump(sorted(self.tasklist, key = lambda i: i['stage'], reverse=True), fileWrite, sort_keys=False)
             return True

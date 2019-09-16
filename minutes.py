@@ -7,11 +7,12 @@ class Minutes():
         self.entries = []
         try:
             file = open(self.filename)
-            yamlData = yaml.load(file)
+            yamlData = yaml.safe_load(file)
+            print("---",yamlData)
             if type(yamlData) == list:
                 self.entries = yamlData
         except FileNotFoundError:
-            pass
+            print(f'File Not Found: {filename}')
         
     def addEntry(self, team_member, task, accomplished, learning, next_steps, photo):
         print(photo.filename)
@@ -49,7 +50,23 @@ class Minutes():
         with open(self.filename, "w") as file:
             print(yaml.dump(self.entries))
             yaml.dump(self.entries, file,sort_keys=False)
+    
+    def getTasksDictionary(self):
+        taskSorted = sorted(self.entries, key = lambda i: i['task'])
+        tasksdict = {}
+        print('test')
+        print(self.entries)
+        for item in taskSorted:
+            print(item)
+            if not(item['task'] in tasksdict.keys()):
+                tasksdict[item['task']] = [item]
+            else:
+                tasksdict[item['task']].append(item)
+        
+        return(tasksdict)
+        
+
 
 if __name__ == "__main__":
-    Entry = Minutes('data/9.2.2019.yaml')
-    Entry.addEntry("Testerman", "testing", "accomplished testing", "learned testing", "next steps are to test", "This should be a link to a photo")
+    Entry = Minutes('data/entries/9.8.2019.yaml')
+    Entry.toHtml()
