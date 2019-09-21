@@ -1,7 +1,7 @@
-<%def name="title()">Test </%def>
+<%def name="title()">Entry Form-ftc16072</%def>
 <%def name="head()"></%def>
 <%inherit file = "base.mako"/>
-<a href="tasksForm">Update Tasks<a>
+<a href="index">Back<a>
 <form action="addEntry" method="post" enctype="multipart/form-data">
     <label for="Team_member">Your Name:</label> 
     <select name ="Team_member">

@@ -1,9 +1,21 @@
-<%def name="title()">Test </%def>
+<%def name="title()">Tasks Form - ftc16072 </%def>
 <%def name="head()"></%def>
 <%inherit file = "base.mako"/>
 <a href="index">Back</a> <br> <br> <br>
-<a href="addTasksForm" type="button">Add Task</a>
-
+<fieldset> <legend>Add Task</legend>
+<form action="addTasks" method="post" enctype="multipart/form-data">
+    <label for="task">Task Name:</label>
+    <input name="task" type="textarea"> <br>
+    <label for="stage">stage:</label>
+    <select name="stage">
+    <option>Working On</option>
+    <option>Completed</option>
+    <option>Abandonded</option>
+    </select> <br>
+    <input type="submit" value="Add">
+</form>
+</fieldset> <br/>
+<fieldset> <legend>Update Tasks</legend>
 <form action="updateTasks" method="post" enctype="multipart/form-data">
     <br/>
     <label for="Task">Tasks:</label> <br/>
@@ -37,3 +49,4 @@
     </table>
     <input type="submit" value="Update">
 </form>
+</fieldset>

@@ -2,6 +2,7 @@ import cherrypy
 from mako.lookup import TemplateLookup
 import yaml
 import datetime
+import glob
 from minutes import Minutes
 from tasks import Tasks
 
@@ -15,6 +16,10 @@ class FtcNotebook(object):
 
     @cherrypy.expose
     def index(self):
+        return self.template('home.mako')
+
+    @cherrypy.expose
+    def newEntry(self):
         member_list = yaml.safe_load(open("data/members.yaml"))
         tasks = yaml.safe_load(open("data/tasks.yaml"))
         return self.template('engNotebookForm.mako', members=member_list, tasks=tasks)
@@ -23,10 +28,10 @@ class FtcNotebook(object):
     def addEntry(self, Team_member, Task, Accomplished, Learning, Next_steps, Photo):
         print("Photo", Photo)
         now = datetime.datetime.now()
-        date = str(now.month) + "." + str(now.day) +"."+ str(now.year)
+        date = now.strftime("%Y-%m-%d")
         Entry = Minutes('data/'+ date + '.yaml')
         Entry.addEntry(Team_member, Task, Accomplished, Learning, Next_steps, Photo)
-        return "<a href='index'>back</a>"
+        return self.newEntry()
     
     @cherrypy.expose
     def tasksForm(self):
@@ -39,19 +44,24 @@ class FtcNotebook(object):
         tasks = Tasks()
         taskdict = dict(**kwargs) 
         tasks.UpdateTasks(taskdict)
-        return "<a href=tasksForm>Back</a>"
+        return self.tasksForm()
 
-    @cherrypy.expose
-    def addTasksForm(self):
-        return self.template('addTasks.mako')
-    
     @cherrypy.expose
     def addTasks(self, task, stage):
         tasks = Tasks()
         if tasks.AddTasks(taskName=task, stage=stage):
-            return "Success! <br> <a href=addTasksForm>submit another</a> <br> <a href=tasksForm>Back</a>"
+            return self.tasksForm()
         else:
             return "Something Went Wrong <br> <a href=addTasksForm>submit another</a> <br> <a href=tasksForm>Back</a>"
+
+    @cherrypy.expose
+    def viewEntries(self):
+        files = sorted(glob.iglob('data/[0-9]*.yaml'))
+        return self.template('veiwEntries.mako', files=files)
+
+    @cherrypy.expose
+    def viewEntry(self, filename):
+        return self.template('viewEntry.mako', minutes=Minutes(filename), pageTitle=filename[5:-5])
         
         
 
