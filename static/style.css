@@ -21,3 +21,18 @@ label {
     text-align: right;
     width: 20%;
 }
+H1 {
+    text-align:center
+}
+table {
+    border-collapse:collapse;
+    border: 1px solid black;   
+}
+th{
+    border: 1px solid black;
+    background-color: black;
+    color: #f9b813;
+}
+td{
+    border:1px solid black;
+}

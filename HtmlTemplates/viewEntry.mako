@@ -15,17 +15,43 @@
         </tr>
         
         % for item, entries in minutes.getTasksDictionary().items():
-            % for entry in entries:
-                <tr>
+            <tr>
                     <td>${item}</td>
-                    <td>${entry['team_member']}</td>
-                    <td>${entry['accomplished']}</td>
-                    <td>${entry['learning']}</td>
-                    <td>${entry['next_steps']}</td>
-                % if entry['photo']:
-                    <td><IMG SRC="${minutes.getPhotoLink(entry['photo'])}" ALT="Photo"/></td>
-                % endif
+                    <%
+                        teamMembers = ""
+                        accomplished = ""
+                        learning = ""
+                        next_steps = ""
+                        photos = {}
+                    %>
+            % for entry in entries:
+                    <%
+                        if entries.index(entry) == len(entries) - 1:
+                            comma = " "
+                        else:
+                            comma = ", "
+                        teamMembers += entry['team_member'] + comma
+                        if entry['accomplished']:
+                            accomplished += entry['team_member'] + "-" + entry['accomplished'] + comma
+                        if entry['learning']:
+                            learning += entry['team_member'] + "-" + entry['learning'] + comma
+                        if entry['next_steps']:
+                            next_steps += entry['team_member'] + "-" + entry['next_steps'] + comma
+                        if entry['photo']:
+                            photos[entry['team_member']] = minutes.getPhotoLink(entry['photo'])
+
+                        print(photos)
+                    %>
             % endfor
+            <td>${teamMembers}</td>
+            <td>${accomplished}</td>
+            <td>${learning}</td>
+            <td>${next_steps}</td>
+            <td>
+            %for member, photo in photos.items():
+                ${member}: <br/><IMG SRC=${photo} ALT="Photo"/> <br/>
+            %endfor
+            </td>
             </tr>
         % endfor
     </table>
