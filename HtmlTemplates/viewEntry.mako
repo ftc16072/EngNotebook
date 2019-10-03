@@ -18,10 +18,10 @@
             <tr>
                     <td>${item}</td>
                     <%
-                        teamMembers = ""
-                        accomplished = ""
-                        learning = ""
-                        next_steps = ""
+                        teamMembers = []
+                        accomplished = []
+                        learning = []
+                        next_steps = []
                         photos = {}
                     %>
             % for entry in entries:
@@ -30,23 +30,40 @@
                             comma = " "
                         else:
                             comma = ", "
-                        teamMembers += entry['team_member'] + comma
+                        teamMembers.append(entry['team_member'] + comma)
                         if entry['accomplished']:
-                            accomplished += entry['team_member'] + "-" + entry['accomplished'] + comma
+                            accomplished.append(entry['team_member'] + "-" + entry['accomplished'] + comma)
                         if entry['learning']:
-                            learning += entry['team_member'] + "-" + entry['learning'] + comma
+                            learning.append(entry['team_member'] + "-" + entry['learning'] + comma)
                         if entry['next_steps']:
-                            next_steps += entry['team_member'] + "-" + entry['next_steps'] + comma
+                            next_steps.append(entry['team_member'] + "-" + entry['next_steps'] + comma)
                         if entry['photo']:
                             photos[entry['team_member']] = minutes.getPhotoLink(entry['photo'])
 
                         print(photos)
                     %>
+                    <br/>
             % endfor
-            <td>${teamMembers}</td>
-            <td>${accomplished}</td>
-            <td>${learning}</td>
-            <td>${next_steps}</td>
+            <td>
+            %for member in teamMembers:
+                ${member} <br/>
+            %endfor
+            </td>
+            <td>
+            %for item in accomplished:
+                ${item} <br/>
+            %endfor
+            </td>
+            <td>
+            %for item in learning:
+                ${item} <br/>
+            %endfor
+            </td>
+            <td>
+            %for step in next_steps:
+                ${step} <br/>
+            %endfor
+            </td>
             <td>
             %for member, photo in photos.items():
                 ${member}: <br/><IMG SRC=${photo} ALT="Photo"/> <br/>
