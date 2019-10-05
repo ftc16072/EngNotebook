@@ -7,7 +7,6 @@
     <table>
         <tr>
             <th>Task</th>
-            <th>Team Member</th>
             <th>Accomplished</th>
             <th>Learned</th>
             <th>Next Steps</th>
@@ -44,11 +43,6 @@
                     %>
                     <br/>
             % endfor
-            <td>
-            %for member in teamMembers:
-                ${member} <br/>
-            %endfor
-            </td>
             <td>
             %for item in accomplished:
                 ${item} <br/>
