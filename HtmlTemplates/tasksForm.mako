@@ -29,22 +29,13 @@
     % for task in sorted(tasks, key = lambda i: i['stage'], reverse=True):
     <tr>
         <td >${task['name']}</td> 
-        % if task["stage"] == 'Working On':
-            <td style="text-align:center"><input type="radio" name=${task['name']} value="Working On" checked></td>
-            <td style="text-align:center"><input type="radio" name=${task['name']} value="Completed"></td>
-            <td style="text-align:center"><input type="radio" name=${task['name']} value="Abandonded"></td>
-        % endif
-        % if task["stage"] == 'Completed':
-            <td style="text-align:center"><input type="radio" name=${task['name']} value="Working On" ></td>
-            <td style="text-align:center"><input type="radio" name=${task['name']} value="Completed" checked></td>
-            <td style="text-align:center"><input type="radio" name=${task['name']} value="Abandonded"></td>
-        % endif
-        % if task["stage"] == 'Abandonded':
-            <td style="text-align:center"><input type="radio" name=${task['name']} value="Working On" ></td>
-            <td style="text-align:center"><input type="radio" name=${task['name']} value="Completed"></td>
-            <td style="text-align:center"><input type="radio" name=${task['name']} value="Abandonded" checked></td>
-        % endif
-    </tr>
+        % for stage in ['Working On', 'Completed', 'Abandoned']:
+            <td style="text-align:center">
+            <input type="radio" name="${task['name']}" value="${stage}" 
+                              ${"checked" if task["stage"] == stage else ""}>
+            </td>
+        % endfor    
+      </tr>
     % endfor
     </table>
     <input type="submit" value="Update">
