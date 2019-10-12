@@ -31,8 +31,9 @@
         <td >${task['name']}</td> 
         % for stage in ['Working On', 'Completed', 'Abandoned']:
             <td style="text-align:center">
-            <input type="radio" name="${task['name']}" value="${stage}" 
+            <input type="radio" name="${task['name']}" value="${stage}"
                               ${"checked" if task["stage"] == stage else ""}>
+
             </td>
         % endfor    
       </tr>

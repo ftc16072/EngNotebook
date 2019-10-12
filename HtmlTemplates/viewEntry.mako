@@ -4,18 +4,16 @@
 <a href="index">Back</a> <br>
 <body>
     <h1>${pageTitle}</h1>
-    <table>
+    <table class="Minutes">
         <tr>
-            <th>Task</th>
-            <th>Accomplished</th>
-            <th>Learned</th>
-            <th>Next Steps</th>
-            <th>Picture</th>
+            <th class="task">Task</th>
+            <th class="details">Details</th>
+            <th class="picture">Picture</th>
         </tr>
         
         % for item, entries in minutes.getTasksDictionary().items():
             <tr>
-                    <td>${item}</td>
+                    <td class="header">${item}</td>
                     <%
                         teamMembers = []
                         accomplished = []
@@ -44,19 +42,36 @@
                     <br/>
             % endfor
             <td>
-            %for item in accomplished:
-                ${item} <br/>
-            %endfor
-            </td>
-            <td>
-            %for item in learning:
-                ${item} <br/>
-            %endfor
-            </td>
-            <td>
-            %for step in next_steps:
-                ${step} <br/>
-            %endfor
+                <table class="details">
+                    <tr>
+                        <th>Accomplished</th>
+                        <td>
+                            %for item in accomplished:
+                                ${item} <br/>
+                            %endfor
+                        </td>
+                        
+                    </tr>
+                    <tr>
+                        <th>Learning</th>
+                        
+                        <td>
+                            %for item in learning:
+                                ${item} <br/>
+                            %endfor
+                        </td>
+                        
+                    </tr>
+                    <tr>
+                    <th>Next Steps</th>
+                    <td>
+                            %for step in next_steps:
+                                ${step} <br/>
+                            %endfor
+                        </td>
+                    </tr>
+
+                </table>
             </td>
             <td>
             %for member, photo in photos.items():

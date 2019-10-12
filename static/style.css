@@ -17,22 +17,47 @@ legend {
     padding: 3px 6px;
 }
 label {
-    display: inline-block;
+    /*display: inline-block; */
     text-align: right;
     width: 20%;
 }
 H1 {
     text-align:center
 }
-table {
+table.Minutes {
     border-collapse:collapse;
-    border: 1px solid black;   
+    border: 1px solid black;
+    table-layout: fixed;
+    overflow: hidden;
+    width: 100%;   
 }
-th{
+table.Minutes th{
     border: 1px solid black;
     background-color: black;
     color: #f9b813;
 }
-td{
+table.Minutes td{
     border:1px solid black;
+}
+
+table.Minutes th.details{
+    width: 60%;
+}
+table.Minutes th.picture{
+    width: 30%;
+}
+table.Minutes table.details{
+    width: 100%;
+    height: 100%;
+    border-collapse: collapse;
+}
+table.Minutes table.details th{
+    border-collapse: collapse;
+    background-color:  #FCFFF5;
+    color: black;
+}
+table.Minutes td.header{
+    text-align: center;
+    font-weight: bold;
+    text-transform: capitalize;
 }
