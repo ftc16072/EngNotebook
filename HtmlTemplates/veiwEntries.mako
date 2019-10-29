@@ -10,5 +10,8 @@
                                 <option value=${file}>${file[5:-5]}</option>
                         % endfor
                 </select>
-        <input type="submit" value="Select"/>
+        <br/>
+        <input type="radio" name="destination" value="Screen" checked>Screen</input>
+        <input type= "radio" name="destination" value="Printer">Printer</input>
+        <br/><input type="submit" value="Select"/>
 </form>

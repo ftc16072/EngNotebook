@@ -56,13 +56,14 @@ class FtcNotebook(object):
 
     @cherrypy.expose
     def viewEntries(self):
-        files = sorted(glob.iglob('data/[0-9]*.yaml'))
+        files = sorted(glob.iglob('data/[0-9]*.yaml'), reverse=True)
         return self.template('veiwEntries.mako', files=files)
 
     @cherrypy.expose
-    def viewEntry(self, filename):
-        return self.template('viewEntry.mako', minutes=Minutes(filename), pageTitle=filename[5:-5])
-        
-        
-
+    def viewEntry(self, filename, destination):
+        return self.template('viewEntry.mako', minutes=Minutes(filename), pageTitle=filename[5:-5], destination=destination)    
+        # if destination == "Screen":
+        #     return self.template('viewEntry.mako', minutes=Minutes(filename), pageTitle=filename[5:-5])    
+        # else:
+        #     return self.template('printerFriendly.mako', minutes=Minutes(filename), pageTitle=filename[5:-5])
 cherrypy.quickstart(FtcNotebook(), config='development.conf')

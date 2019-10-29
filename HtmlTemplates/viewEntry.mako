@@ -1,8 +1,6 @@
 <%def name="title()">View Entries - ftc16072 </%def>
 <%def name="head()"></%def>
 <%inherit file = "base.mako"/>
-<a href="index">Back</a> <br>
-<body>
     <h1>${pageTitle}</h1>
     <table class="Minutes">
         <tr>
@@ -20,27 +18,24 @@
                         learning = []
                         next_steps = []
                         photos = {}
-                    %>
-            % for entry in entries:
-                    <%
-                        if entries.index(entry) == len(entries) - 1:
-                            comma = " "
-                        else:
-                            comma = ", "
-                        teamMembers.append(entry['team_member'] + comma)
-                        if entry['accomplished']:
-                            accomplished.append(entry['team_member'] + "-" + entry['accomplished'] + comma)
-                        if entry['learning']:
-                            learning.append(entry['team_member'] + "-" + entry['learning'] + comma)
-                        if entry['next_steps']:
-                            next_steps.append(entry['team_member'] + "-" + entry['next_steps'] + comma)
-                        if entry['photo']:
-                            photos[entry['team_member']] = minutes.getPhotoLink(entry['photo'])
+                        for entry in entries:
+                            if entries.index(entry) == len(entries) - 1:
+                                comma = " "
+                            else:
+                                comma = ", "
+                            teamMembers.append(entry['team_member'] + comma)
+                            if entry['accomplished']:
+                                accomplished.append(entry['team_member'] + "-" + entry['accomplished'] + comma)
+                            if entry['learning']:
+                                learning.append(entry['team_member'] + "-" + entry['learning'] + comma)
+                            if entry['next_steps']:
+                                next_steps.append(entry['team_member'] + "-" + entry['next_steps'] + comma)
+                            if entry['photo']:
+                                photos[entry['team_member']] = minutes.getPhotoLink(entry['photo'])
 
-                        print(photos)
+                            print(photos)
                     %>
-                    <br/>
-            % endfor
+            
             <td>
                 <table class="details">
                     <tr>
@@ -75,10 +70,11 @@
             </td>
             <td>
             %for member, photo in photos.items():
-                ${member}: <br/><IMG SRC=${photo} ALT="Photo"/> <br/>
+                ${member}: <br/><div class="image-container">
+                <IMG SRC=${photo} ALT="Photo" />
+                </div> <br/>
             %endfor
             </td>
             </tr>
         % endfor
     </table>
-</body>

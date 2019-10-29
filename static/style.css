@@ -7,15 +7,10 @@ body{
 	background-color: #FCFFF5;
 }
 
-h1 { font-size: 34px; line-height: 120%; }
+h1 { font-size: 34px; }
 h2 { font-size: 20px; }
 p  { font-size: 14px; }
 
-legend {
-    background-color: #000;
-    color: #fff;
-    padding: 3px 6px;
-}
 label {
     /*display: inline-block; */
     text-align: right;
@@ -29,7 +24,7 @@ table.Minutes {
     border: 1px solid black;
     table-layout: fixed;
     overflow: hidden;
-    width: 100%;   
+    width: 90%;   
 }
 table.Minutes th{
     border: 1px solid black;
@@ -41,10 +36,10 @@ table.Minutes td{
 }
 
 table.Minutes th.details{
-    width: 60%;
+    width: 50%;
 }
 table.Minutes th.picture{
-    width: 30%;
+    width: 40%;
 }
 table.Minutes table.details{
     width: 100%;
@@ -60,4 +55,8 @@ table.Minutes td.header{
     text-align: center;
     font-weight: bold;
     text-transform: capitalize;
+}
+.image-container > img{
+    max-width: 100%;
+    height: auto;
 }

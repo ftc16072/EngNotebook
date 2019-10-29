@@ -8,7 +8,6 @@
 </tr>
 <tr>
 <th><button onclick= "window.location.href = '/viewEntries';">View Entries</button></th>
-<th><button onclick= "window.location.href = '/generateMinutes';">Generate entire Minutes</button></th>
 </tr>
 
 
