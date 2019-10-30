@@ -1,4 +1,4 @@
-<%def name="title()">View Entries - ftc16072 </%def>
+<%def name="title()">FTC16072 Entries - ${pageTitle}</%def>
 <%def name="head()"></%def>
 <%inherit file = "base.mako"/>
     <h1>${pageTitle}</h1>
