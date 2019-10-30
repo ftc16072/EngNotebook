@@ -25,54 +25,42 @@
                                 comma = " "
                             teamMembers.append(entry['team_member'] + comma)
                             if entry['accomplished']:
-                                accomplished.append(entry['team_member'] + "-" + entry['accomplished'] + comma)
+                                accomplished.append(entry['team_member'] + ": " + entry['accomplished'] + comma)
                             if entry['learning']:
-                                learning.append(entry['team_member'] + "-" + entry['learning'] + comma)
+                                learning.append(entry['team_member'] + ": " + entry['learning'] + comma)
                             if entry['next_steps']:
-                                next_steps.append(entry['team_member'] + "-" + entry['next_steps'] + comma)
+                                next_steps.append(entry['team_member'] + ": " + entry['next_steps'] + comma)
                             if entry['photo']:
                                 photos[entry['team_member']] = minutes.getPhotoLink(entry['photo'])
 
                             print(photos)
                     %>
-            
-            <td>
-                <table class="details">
-                    <tr>
-                        <th>Accomplished</th>
-                        <td>
-                            %for item in accomplished:
-                                ${item} <br/>
-                            %endfor
-                        </td>
-                        
-                    </tr>
-                    <tr>
-                        <th>Learning</th>
-                        
-                        <td>
-                            %for item in learning:
-                                ${item} <br/>
-                            %endfor
-                        </td>
-                        
-                    </tr>
-                    <tr>
-                    <th>Next Steps</th>
-                    <td>
-                            %for step in next_steps:
-                                ${step} <br/>
-                            %endfor
-                        </td>
-                    </tr>
-
-                </table>
+            <UL>
+               <LI>Accomplished
+               <UL>
+                 %for item in accomplished:
+                      <LI>${item} </LI>
+                  %endfor
+               </UL></LI>
+               <LI>Learning
+               <UL>
+                 %for item in learning:
+                        <LI>${item} </LI>
+                 %endfor
+               </UL></LI>
+               <LI>Next Steps
+               <UL>
+                 %for step in next_steps:
+                        <LI>${step} </LI>
+                 %endfor
+               </UL></LI>
+            </UL>
             </td>
             <td>
             %for member, photo in photos.items():
                 <span class="image-container">
                 <IMG SRC=${photo} ALT="Photo" />
-                </span>
+                </span><br/>
             %endfor
             </td>
             </tr>

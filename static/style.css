@@ -58,8 +58,9 @@ table.Minutes td.header{
 }
 
 .image-container{
-    display:table;
+    display:inline-block;
     margin:0 auto;
+    padding:10px;
 }
 
 .image-container > img{
