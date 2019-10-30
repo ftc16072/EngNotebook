@@ -22,7 +22,7 @@
                             if entries.index(entry) == len(entries) - 1:
                                 comma = " "
                             else:
-                                comma = ", "
+                                comma = " "
                             teamMembers.append(entry['team_member'] + comma)
                             if entry['accomplished']:
                                 accomplished.append(entry['team_member'] + "-" + entry['accomplished'] + comma)
@@ -70,9 +70,9 @@
             </td>
             <td>
             %for member, photo in photos.items():
-                ${member}: <br/><div class="image-container">
+                <span class="image-container">
                 <IMG SRC=${photo} ALT="Photo" />
-                </div> <br/>
+                </span>
             %endfor
             </td>
             </tr>
