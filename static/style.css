@@ -56,6 +56,12 @@ table.Minutes td.header{
     font-weight: bold;
     text-transform: capitalize;
 }
+
+.image-container{
+    display:table;
+    margin:0 auto;
+}
+
 .image-container > img{
     max-width: 250px;
     max-height: 250px;
