@@ -6,7 +6,7 @@
         <tr>
             <th class="task">Task</th>
             <th class="details">Details</th>
-            <th class="picture">Picture</th>
+            <th class="picture">Picture(s)</th>
         </tr>
         
         % for item, entries in minutes.getTasksDictionary().items():
@@ -60,7 +60,7 @@
             %for member, photo in photos.items():
                 <span class="image-container">
                 <IMG SRC=${photo} ALT="Photo" />
-                </span><br/>
+                </span>
             %endfor
             </td>
             </tr>
