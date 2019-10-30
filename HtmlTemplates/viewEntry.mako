@@ -35,7 +35,7 @@
 
                             print(photos)
                     %>
-            <UL>
+            <td><UL>
                <LI>Accomplished
                <UL>
                  %for item in accomplished:
