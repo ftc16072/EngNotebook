@@ -16,7 +16,8 @@ class FtcNotebook(object):
 
     @cherrypy.expose
     def index(self):
-        return self.template('home.mako')
+        files = sorted(glob.iglob('data/[0-9]*.yaml'), reverse=True)
+        return self.template('home.mako', files=files)
 
     @cherrypy.expose
     def newEntry(self):
@@ -55,11 +56,6 @@ class FtcNotebook(object):
             return "Something Went Wrong <br> <a href=addTasksForm>submit another</a> <br> <a href=tasksForm>Back</a>"
 
     @cherrypy.expose
-    def viewEntries(self):
-        files = sorted(glob.iglob('data/[0-9]*.yaml'), reverse=True)
-        return self.template('veiwEntries.mako', files=files)
-
-    @cherrypy.expose
     def viewEntry(self, filename, destination):
         files = sorted(glob.iglob('data/[0-9]*.yaml'), reverse=True)
         previousEntry = ''
@@ -67,12 +63,12 @@ class FtcNotebook(object):
         for file in files:
             if(file == filename):
                 if(files.index(file) + 1 >= len(files)):
-                    previousEntry = "12345No Previous12345"
+                    previousEntry = ""
                 else:
                     previousEntry = files[files.index(file) + 1]
 
                 if(files.index(file) <= 0):
-                    nextEntry = "12345No Next12345"
+                    nextEntry = ""
                 else:
                     nextEntry = files[files.index(file) - 1]
 

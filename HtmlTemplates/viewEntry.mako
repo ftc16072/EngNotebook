@@ -1,8 +1,15 @@
 <%def name="title()">FTC16072 Entries - ${pageTitle}</%def>
 <%def name="head()"></%def>
 <%inherit file = "base.mako"/>
-    <a href="/viewEntry?filename=${previousEntry}&destination=${destination}"><button>${previousEntry[5:-5]}</button></a>
-    <a href="/viewEntry?filename=${nextEntry}&destination=${destination}"><button>${nextEntry[5:-5]}</button></a>
+    % if destination == "Screen":
+        % if previousEntry:
+            <a href="/viewEntry?filename=${previousEntry}&destination=${destination}"><button>${previousEntry[5:-5]}</button></a>
+        % endif
+        <a href="/"><button>Home</button></a>
+        % if nextEntry:
+            <a href="/viewEntry?filename=${nextEntry}&destination=${destination}"><button>${nextEntry[5:-5]}</button></a>
+        % endif
+    % endif
     <h1>${pageTitle}</h1>
     <table class="Minutes">
         <tr>
