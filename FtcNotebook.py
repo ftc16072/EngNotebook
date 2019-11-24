@@ -61,7 +61,24 @@ class FtcNotebook(object):
 
     @cherrypy.expose
     def viewEntry(self, filename, destination):
-        return self.template('viewEntry.mako', minutes=Minutes(filename), pageTitle=filename[5:-5], destination=destination)    
+        files = sorted(glob.iglob('data/[0-9]*.yaml'), reverse=True)
+        previousEntry = ''
+        nextEntry = ''
+        for file in files:
+            if(file == filename):
+                if(files.index(file) + 1 >= len(files)):
+                    previousEntry = "12345No Previous12345"
+                else:
+                    previousEntry = files[files.index(file) + 1]
+
+                if(files.index(file) <= 0):
+                    nextEntry = "12345No Next12345"
+                else:
+                    nextEntry = files[files.index(file) - 1]
+
+        
+        print(previousEntry)
+        return self.template('viewEntry.mako', previousEntry=previousEntry, nextEntry=nextEntry, minutes=Minutes(filename), pageTitle=filename[5:-5], destination=destination)    
         # if destination == "Screen":
         #     return self.template('viewEntry.mako', minutes=Minutes(filename), pageTitle=filename[5:-5])    
         # else:

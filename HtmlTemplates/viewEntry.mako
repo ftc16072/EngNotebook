@@ -1,6 +1,8 @@
 <%def name="title()">FTC16072 Entries - ${pageTitle}</%def>
 <%def name="head()"></%def>
 <%inherit file = "base.mako"/>
+    <a href="/viewEntry?filename=${previousEntry}&destination=${destination}"><button>${previousEntry[5:-5]}</button></a>
+    <a href="/viewEntry?filename=${nextEntry}&destination=${destination}"><button>${nextEntry[5:-5]}</button></a>
     <h1>${pageTitle}</h1>
     <table class="Minutes">
         <tr>
