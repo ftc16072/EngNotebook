@@ -13,9 +13,7 @@
     <label for="Task">What did you work on?</label> <br/>
     <select name ="Task">
         % for task in tasks:
-            % if task['stage'] == 'Working On':
-                <option>${task['name']}</option>
-            % endif
+            <option value=${task.taskId}>${task.name}</option>
         % endfor
     </select>
     <br/>

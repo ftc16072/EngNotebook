@@ -28,8 +28,9 @@ class FtcNotebook(object):
     @cherrypy.expose
     def newEntry(self):
         member_list = yaml.safe_load(open("data/members.yaml"))
-        tasks = yaml.safe_load(open("data/tasks.yaml"))
-        return self.template('engNotebookForm.mako', members=member_list, tasks=tasks)
+        with sqlite3.connect(DB_STRING) as connection:
+            taskList = self.tasks.getWorkingTaskList(connection)
+        return self.template('engNotebookForm.mako', members=member_list, tasks=taskList)
 
     @cherrypy.expose
     def addEntry(self, Team_member, Task, Accomplished, Learning, Next_steps, Photo):
@@ -42,24 +43,24 @@ class FtcNotebook(object):
     
     @cherrypy.expose
     def tasksForm(self):
+        taskStages = TaskStages
         with sqlite3.connect(DB_STRING) as connection:
             taskList = self.tasks.getAllTaskList(connection)
-        return self.template('tasksForm.mako', taskList=taskList, TaskStages=TaskStages)
+        return self.template('tasksForm.mako', taskList=taskList, TaskStages=taskStages)
 
     @cherrypy.expose
     def updateTasks(self, **kwargs):
-        tasks = Tasks()
         taskdict = dict(**kwargs) 
-        tasks.UpdateTasks(taskdict)
+        with sqlite3.connect(DB_STRING) as connection:
+            for (k, v) in taskdict.items():
+                self.tasks.changeState(connection, taskId=k, newState=v)
         return self.tasksForm()
 
     @cherrypy.expose
     def addTasks(self, task, stage):
-        tasks = Tasks()
-        if tasks.AddTasks(taskName=task, stage=stage):
-            return self.tasksForm()
-        else:
-            return "Something Went Wrong <br> <a href=addTasksForm>submit another</a> <br> <a href=tasksForm>Back</a>"
+        with sqlite3.connect(DB_STRING) as connection:
+            self.tasks.addTask(dbConnection=connection,name=task, stage=stage)
+        return self.tasksForm()
 
     @cherrypy.expose
     def viewEntry(self, filename, destination):

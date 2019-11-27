@@ -29,7 +29,7 @@ class Tasks():
             stage INTEGER NOT NULL DEFAULT 0)"""
             )
 
-    def insertTask(self, dbConnection, name, stage):
+    def addTask(self, dbConnection, name, stage):
         dbConnection.execute("INSERT INTO tasks (name, stage) Values (?, ?)", (name, stage))
     
     def migrate(self, dbConnection, dbSchemaVersion):
@@ -73,8 +73,8 @@ if __name__ == "__main__":
 
         tasks.createTable(connection)
         
-        tasks.insertTask(connection, "Test", TaskStages.workingOn)
-        tasks.insertTask(connection, "Working", TaskStages.workingOn)
+        tasks.addTask(connection, "Test", TaskStages.workingOn)
+        tasks.addTask(connection, "Working", TaskStages.workingOn)
         taskList = tasks.getAllTaskList(connection)
         printList(taskList)
 

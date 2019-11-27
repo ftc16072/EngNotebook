@@ -8,9 +8,9 @@
     <input name="task" type="textarea"> <br>
     <label for="stage">stage:</label>
     <select name="stage">
-    <option>Working On</option>
-    <option>Completed</option>
-    <option>Abandonded</option>
+    <option value=${TaskStages.workingOn.value}>Working On</option>
+    <option value=${TaskStages.completed.value}>Completed</option>
+    <option value=${TaskStages.abandoned.value}>Abandoned</option>
     </select> <br>
     <input type="submit" value="Add">
 </form>
@@ -31,7 +31,7 @@
         <td >${task.name}</td> 
         % for stage in [TaskStages.workingOn, TaskStages.completed, TaskStages.abandoned]:
             <td style="text-align:center">
-            <input type="radio" name="${task.taskId}" value="${stage}"
+            <input type="radio" name="${task.taskId}" value="${stage.value}"
                               ${"checked" if task.stage == stage else ""}>
 
             </td>
