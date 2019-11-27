@@ -60,7 +60,7 @@ def printList(taskList):
 
 if __name__ == "__main__":
     
-    DEFAULT_PATH = os.path.join(os.path.dirname(__file__), 'data\database.sqlite3')
+    DEFAULT_PATH = os.path.join(os.path.dirname(__file__), 'data/testDatabase.sqlite3')
     
     try:
         os.remove(DEFAULT_PATH)
