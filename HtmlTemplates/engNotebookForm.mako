@@ -6,7 +6,7 @@
     <label for="Team_member">Your Name:</label> 
     <select name ="Team_member">
         % for member in members:
-            <option>${member}</option>
+            <option value=${member.memberId}>${member.name}</option>
         % endfor
     </select>
     <br/>

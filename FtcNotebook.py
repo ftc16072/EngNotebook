@@ -7,6 +7,7 @@ import datetime
 import glob
 from minutes import Minutes
 from tasks import Tasks, Task, TaskStages
+from members import Members, Member
 
 
 DB_STRING = os.path.join(os.path.dirname(__file__), 'data\database.sqlite3')
@@ -16,6 +17,7 @@ class FtcNotebook(object):
     def __init__(self):
         self.lookup = TemplateLookup(directories = ['HtmlTemplates'], default_filters=['h'])
         self.tasks = Tasks()
+        self.members = Members()
 
     def template(self, template_name, **kwargs):
         return self.lookup.get_template(template_name).render(**kwargs)
@@ -27,10 +29,11 @@ class FtcNotebook(object):
 
     @cherrypy.expose
     def newEntry(self):
-        member_list = yaml.safe_load(open("data/members.yaml"))
+
         with sqlite3.connect(DB_STRING) as connection:
+            memberList = self.members.getMembers(connection)
             taskList = self.tasks.getWorkingTaskList(connection)
-        return self.template('engNotebookForm.mako', members=member_list, tasks=taskList)
+        return self.template('engNotebookForm.mako', members=memberList, tasks=taskList)
 
     @cherrypy.expose
     def addEntry(self, Team_member, Task, Accomplished, Learning, Next_steps, Photo):
