@@ -26,13 +26,13 @@
     <th>Completed</th>
     <th>Abandonded</th>
   </tr>
-    % for task in sorted(tasks, key = lambda i: i['stage'], reverse=True):
+    % for task in taskList:
     <tr>
-        <td >${task['name']}</td> 
-        % for stage in ['Working On', 'Completed', 'Abandoned']:
+        <td >${task.name}</td> 
+        % for stage in [TaskStages.workingOn, TaskStages.completed, TaskStages.abandoned]:
             <td style="text-align:center">
-            <input type="radio" name="${task['name']}" value="${stage}"
-                              ${"checked" if task["stage"] == stage else ""}>
+            <input type="radio" name="${task.taskId}" value="${stage}"
+                              ${"checked" if task.stage == stage else ""}>
 
             </td>
         % endfor    

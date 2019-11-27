@@ -1,15 +1,21 @@
+import os
+import sqlite3
 import cherrypy
 from mako.lookup import TemplateLookup
 import yaml
 import datetime
 import glob
 from minutes import Minutes
-from tasks import Tasks
+from tasks import Tasks, Task, TaskStages
+
+
+DB_STRING = os.path.join(os.path.dirname(__file__), 'data\database.sqlite3')
 
 class FtcNotebook(object):
     
     def __init__(self):
         self.lookup = TemplateLookup(directories = ['HtmlTemplates'], default_filters=['h'])
+        self.tasks = Tasks()
 
     def template(self, template_name, **kwargs):
         return self.lookup.get_template(template_name).render(**kwargs)
@@ -36,9 +42,9 @@ class FtcNotebook(object):
     
     @cherrypy.expose
     def tasksForm(self):
-        tasks = yaml.safe_load(open("data/tasks.yaml"))
-        print(tasks)
-        return self.template('tasksForm.mako', tasks=tasks)
+        with sqlite3.connect(DB_STRING) as connection:
+            taskList = self.tasks.getAllTaskList(connection)
+        return self.template('tasksForm.mako', taskList=taskList, TaskStages=TaskStages)
 
     @cherrypy.expose
     def updateTasks(self, **kwargs):

@@ -1,37 +1,86 @@
-import yaml
+import os
+import sqlite3
+from enum import IntEnum
+
+class TaskStages(IntEnum):
+    workingOn = 0
+    completed = 1
+    abandoned = 2
+        
+
+class Task():
+    def __init__(self, taskId, name, stage):
+        self.taskId = taskId
+        self.name = name
+        self.stage = stage
+    
+    def __str__(self):
+        return f"ID:{self.taskId} -- Name:{self.name} -- stage:{self.stage}"
+
+
 
 class Tasks():
-    def __init__(self):
-        self.tasklist = []
-        
-    def UpdateTasks(self, tasks):
+    def createTable(self, dbConnection):
+        dbConnection.execute(
+            """
+        CREATE TABLE tasks (
+            id INTEGER PRIMARY KEY,
+            name TEXT NOT NULL,
+            stage INTEGER NOT NULL DEFAULT 0)"""
+            )
 
-        for name, stage in tasks.items():
-            taskformated = {
-                'name': name, 
-                'stage': stage
-                }
-            self.tasklist.append(taskformated)
-            print(self.tasklist)
-        with open("data/tasks.yaml", "w") as file:
-            print(yaml.dump(sorted(self.tasklist, key = lambda i: i['stage'], reverse=True)))
-            yaml.dump(sorted(self.tasklist, key = lambda i: i['stage'], reverse=True), file,sort_keys=False)
+    def insertTask(self, dbConnection, name, stage):
+        dbConnection.execute("INSERT INTO tasks (name, stage) Values (?, ?)", (name, stage))
+    
+    def migrate(self, dbConnection, dbSchemaVersion):
+        pass
 
-    def AddTasks(self, taskName, stage):
-        try:
-            file = open("data/tasks.yaml", "r")
-            yamlData = yaml.load(file)
-            self.tasklist = yamlData
-            self.tasklist.append({'name':taskName, 'stage':stage})
-            print("---",self.tasklist)
-            fileWrite = open("data/tasks.yaml", "w")
-            yaml.dump(sorted(self.tasklist, key = lambda i: i['stage'], reverse=True), fileWrite, sort_keys=False)
-            return True
-        except FileNotFoundError:
-            return False
+    def changeState(self, dbConnection, taskId, newState):
+        dbConnection.execute("UPDATE tasks SET stage = ? WHERE (id = ?)", (newState, taskId))
+
+    def getAllTaskList(self, dbConnection):
+        tasksList = []
+        for row in dbConnection.execute("SELECT id, name, stage FROM tasks ORDER BY stage ASC, name ASC", ()):
+            tasksList.append(Task(row[0], row[1], row[2]))
+        return tasksList
+
+    def getWorkingTaskList(self, dbConnection):
+        tasksList = []
+        for row in dbConnection.execute("SELECT id, name, stage FROM tasks WHERE stage = ? ORDER BY name ASC", (TaskStages.workingOn,)):
+            tasksList.append(Task(row[0], row[1], row[2]))
+        return tasksList
+
+
+def printList(taskList):
+    for task in taskList:
+        print(task)
+
+    print("----------------------")
 
 
 if __name__ == "__main__":
-    Entry = Tasks()
-    test = {'Test_1': 'Working On', 'Test_2': 'Working On', 'Test_3': 'Completed'}
-    Entry.UpdateTasks(test)
+    
+    DEFAULT_PATH = os.path.join(os.path.dirname(__file__), 'data\database.sqlite3')
+    
+    try:
+        os.remove(DEFAULT_PATH)
+    except IOError:
+        pass #delete File, if it doesn't exist we don't care
+
+    
+    with sqlite3.connect(DEFAULT_PATH) as connection:
+        tasks = Tasks()
+
+        tasks.createTable(connection)
+        
+        tasks.insertTask(connection, "Test", TaskStages.workingOn)
+        tasks.insertTask(connection, "Working", TaskStages.workingOn)
+        taskList = tasks.getAllTaskList(connection)
+        printList(taskList)
+
+        tasks.changeState(connection, 1, TaskStages.completed)
+        taskList = tasks.getAllTaskList(connection)
+        printList(taskList)
+        
+        taskList = tasks.getWorkingTaskList(connection)
+        printList(taskList)
