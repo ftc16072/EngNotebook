@@ -9,10 +9,10 @@
 <tr>
 <th> <br/>
 <form action=viewEntry method="post" enctype="multipart/form-data">
-        <label for="filename">What date</label>
-                <select name="filename">
-                        % for file in files:
-                                <option value=${file}>${file[5:-5]}</option>
+        <label for="dateString">What date</label>
+                <select name="dateString">
+                        % for dateItem in dateList:
+                                <option value=${dateItem}>${dateItem}</option>
                         % endfor
                 </select>
         <br/>

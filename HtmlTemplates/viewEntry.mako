@@ -18,29 +18,29 @@
             <th class="picture">Picture(s)</th>
         </tr>
         
-        % for item, entries in minutes.getTasksDictionary().items():
+        % for item, entries in tasksDictionary.items():
             <tr>
                     <td class="header">${item}</td>
                     <%
                         teamMembers = []
                         accomplished = []
-                        learning = []
-                        next_steps = []
+                        learned = []
+                        nextSteps = []
                         photos = {}
                         for entry in entries:
                             if entries.index(entry) == len(entries) - 1:
                                 comma = " "
                             else:
                                 comma = " "
-                            teamMembers.append(entry['team_member'] + comma)
-                            if entry['accomplished']:
-                                accomplished.append(entry['team_member'] + ": " + entry['accomplished'] + comma)
-                            if entry['learning']:
-                                learning.append(entry['team_member'] + ": " + entry['learning'] + comma)
-                            if entry['next_steps']:
-                                next_steps.append(entry['team_member'] + ": " + entry['next_steps'] + comma)
-                            if entry['photo']:
-                                photos[entry['team_member']] = minutes.getPhotoLink(entry['photo'])
+                            teamMembers.append(entry.memberName + comma)
+                            if entry.accomplished:
+                                accomplished.append(entry.memberName + ": " + entry.accomplished + comma)
+                            if entry.learned:
+                                learned.append(entry.memberName + ": " + entry.learned + comma)
+                            if entry.nextSteps:
+                                nextSteps.append(entry.memberName + ": " + entry.nextSteps + comma)
+                            if entry.photo:
+                                photos[entry.memberName] = minutes.getPhotoLink(entry.photo)
 
                             print(photos)
                     %>
@@ -53,13 +53,13 @@
                </UL></LI>
                <LI>Learning
                <UL>
-                 %for item in learning:
+                 %for item in learned:
                         <LI>${item} </LI>
                  %endfor
                </UL></LI>
                <LI>Next Steps
                <UL>
-                 %for step in next_steps:
+                 %for step in nextSteps:
                         <LI>${step} </LI>
                  %endfor
                </UL></LI>
