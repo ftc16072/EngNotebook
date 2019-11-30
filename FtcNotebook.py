@@ -11,7 +11,7 @@ from members import Members, Member
 import smugmug
 
 smugmugConfig = {}
-DB_STRING = os.path.join(os.path.dirname(__file__), 'data\database.sqlite3')
+DB_STRING = os.path.join(os.path.dirname(__file__), 'data/database.sqlite3')
 
 class FtcNotebook(object):
     
