@@ -50,6 +50,13 @@ class Tasks():
             tasksList.append(Task(row[0], row[1], row[2]))
         return tasksList
 
+    def getTaskId(self, dbconnection, taskText):
+        taskID = dbconnection.execute("SELECT id FROM tasks WHERE name = ?", (taskText,)).fetchone()
+        if taskID:
+            return taskID[0]
+        else:
+            return 0
+
 
 def printList(taskList):
     for task in taskList:

@@ -52,7 +52,7 @@ class FtcNotebook(object):
         now = datetime.datetime.now()
         date = now.strftime("%Y-%m-%d")
         with self.dbConnect()  as connection:
-            self.entries.addEntry(connection, now, taskId, memberId, accomplished, learning, next_steps, imgKey)
+            self.entries.addEntry(connection, date, taskId, memberId, accomplished, learning, next_steps, imgKey, smugmugConfig)
         
         return self.newEntry()
     

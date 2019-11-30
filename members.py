@@ -30,6 +30,9 @@ class Members():
         for row in dbConnection.execute("SELECT id, name FROM members ORDER BY name ASC", ()):
             membersList.append(Member(row[0], row[1]))
         return membersList
+        
+    def getTaskId(self, dbconnection, memberText):
+        return dbconnection.execute("SELECT id FROM members WHERE name = ?", (memberText,)).fetchone()[0]
 
 def printList(memberList):
     for member in memberList:
