@@ -39,8 +39,8 @@
                                 learned.append(entry.memberName + ": " + entry.learned + comma)
                             if entry.nextSteps:
                                 nextSteps.append(entry.memberName + ": " + entry.nextSteps + comma)
-                            if entry.photo:
-                                photos[entry.memberName] = minutes.getPhotoLink(entry.photo)
+                            if entry.photoLink:
+                                photos[entry.memberName] = entry.photoLink
 
                             print(photos)
                     %>
