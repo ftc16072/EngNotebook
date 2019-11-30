@@ -8,9 +8,9 @@
     <input name="task" type="textarea"> <br>
     <label for="stage">stage:</label>
     <select name="stage">
-    <option>Working On</option>
-    <option>Completed</option>
-    <option>Abandonded</option>
+    <option value=${TaskStages.workingOn.value}>Working On</option>
+    <option value=${TaskStages.completed.value}>Completed</option>
+    <option value=${TaskStages.abandoned.value}>Abandoned</option>
     </select> <br>
     <input type="submit" value="Add">
 </form>
@@ -26,13 +26,13 @@
     <th>Completed</th>
     <th>Abandonded</th>
   </tr>
-    % for task in sorted(tasks, key = lambda i: i['stage'], reverse=True):
+    % for task in taskList:
     <tr>
-        <td >${task['name']}</td> 
-        % for stage in ['Working On', 'Completed', 'Abandoned']:
+        <td >${task.name}</td> 
+        % for stage in [TaskStages.workingOn, TaskStages.completed, TaskStages.abandoned]:
             <td style="text-align:center">
-            <input type="radio" name="${task['name']}" value="${stage}"
-                              ${"checked" if task["stage"] == stage else ""}>
+            <input type="radio" name="${task.taskId}" value="${stage.value}"
+                              ${"checked" if task.stage == stage else ""}>
 
             </td>
         % endfor    

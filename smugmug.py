@@ -49,7 +49,6 @@ def get_medium_link(imgKey, config):
     r = requests.get(base_api + imgKey + '-0!sizes',
                      headers=headers,
                      params=params)
-    print(r.json())
     try:
         link = r.json()['Response']['ImageSizes']['MediumImageUrl']
     except KeyError:   # In case it was a tiny image and there wasn't anything stored for medium
