@@ -49,10 +49,23 @@ class Entries():
 
     def getDateList(self, dbConnection):
         dateList = []
-        for row in dbConnection.execute("SELECT DISTINCT date FROM Entries"):
+        for row in dbConnection.execute("SELECT DISTINCT date FROM Entries ORDER BY date DESC"):
             dateList.append(row[0])
 
         return dateList
+
+    def getPrevNext(self, dbConnection, dateString):
+        dateList = self.getDateList(dbConnection)
+        i = dateList.index(dateString)
+        if i == len(dateList)-1:
+            prev = ""
+        else:
+            prev = dateList[i + 1]
+        if i == 0:
+            next = ""
+        else:
+            next = dateList[i - 1]
+        return (prev, next)
 
     def getDateTasksDictionary(self, dateStr, dbConnection):
         entryDict = {}

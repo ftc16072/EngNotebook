@@ -81,20 +81,10 @@ class FtcNotebook(object):
     def viewEntry(self, dateString, destination):
         previousEntry = ''
         nextEntry = ''
-        # for file in files:
-        #     if(file == filename):
-        #         if(files.index(file) + 1 >= len(files)):
-        #             previousEntry = ""
-        #         else:
-        #             previousEntry = files[files.index(file) + 1]
-
-        #         if(files.index(file) <= 0):
-        #             nextEntry = ""
-        #         else:
-        #             nextEntry = files[files.index(file) - 1]
+        
         with self.dbConnect() as connection:
             tasksDictionary = self.entries.getDateTasksDictionary(dateString, connection)
-
+            (previousEntry, nextEntry) = self.entries.getPrevNext(connection, dateString)
         return self.template('viewEntry.mako', previousEntry=previousEntry, nextEntry=nextEntry, tasksDictionary=tasksDictionary, pageTitle=dateString, destination=destination)    
         # if destination == "Screen":
         #     return self.template('viewEntry.mako', minutes=Minutes(filename), pageTitle=filename[5:-5])    

@@ -3,11 +3,11 @@
 <%inherit file = "base.mako"/>
     % if destination == "Screen":
         % if previousEntry:
-            <a href="/viewEntry?filename=${previousEntry}&destination=${destination}"><button>${previousEntry[5:-5]}</button></a>
+            <a href="/viewEntry?dateString=${previousEntry}&destination=${destination}"><button>${previousEntry}</button></a>
         % endif
         <a href="/"><button>Home</button></a>
         % if nextEntry:
-            <a href="/viewEntry?filename=${nextEntry}&destination=${destination}"><button>${nextEntry[5:-5]}</button></a>
+            <a href="/viewEntry?dateString=${nextEntry}&destination=${destination}"><button>${nextEntry}</button></a>
         % endif
     % endif
     <h1>${pageTitle}</h1>
