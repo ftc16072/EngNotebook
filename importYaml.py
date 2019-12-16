@@ -42,10 +42,10 @@ if __name__ == "__main__":
         membersList = ["Andrew Vo", "Chirag Sreedhara", "Eric Wong", "Evan Spiering", "Izaak Kreykes", "Nithya Golla", "Philip Smith", "Preeti Thirukonda", "Rishi Maroju"]
         members.insertMembers(connection, membersList)
 
-        #Pull the Tasks over
-        taskList = yaml.safe_load(open("data/tasks.yaml"))
-        for task in taskList:
-            tasks.addTask(connection, task['name'], textToStage(task['stage']))
+        # #Pull the Tasks over
+        # taskList = yaml.safe_load(open("data/tasks.yaml"))
+        # for task in taskList:
+        #     tasks.addTask(connection, task['name'], textToStage(task['stage']))
 
         #flip the Entries
         files = sorted(glob.iglob('data/[0-9]*.yaml'), reverse=True)
@@ -53,6 +53,10 @@ if __name__ == "__main__":
             date = file[5:-5]
             entryList = yaml.safe_load(open(file))
             for entry in entryList:
+                print("************************************", tasks.getTaskId(connection, entry['task']))
+                if tasks.getTaskId(connection, entry['task']) == 0:
+                    tasks.addTask(connection, entry['task'], 0)
+
                 print(tasks.getTaskId(connection, entry['task']), members.getTaskId(connection, entry['team_member']), entry['accomplished'], entry['learning'], entry['next_steps'], entry['photo'])
                 entries.addEntry(connection, date, tasks.getTaskId(connection, entry['task']), members.getTaskId(connection, entry['team_member']), entry['accomplished'], entry['learning'], entry['next_steps'], entry['photo'], smugmugConfig)
                 print("----------------------------------------")
