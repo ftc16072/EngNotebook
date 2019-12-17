@@ -38,11 +38,8 @@ class Entries():
 
 
     def addEntry(self, dbConnection, date, taskId, memberId, accomplished, learned, nextSteps, photo, smugmugConfig):
-        if photo:
-            photoLink = smugmug.get_medium_link(photo, smugmugConfig)
-        else:
-            photoLink = ""
-        dbConnection.execute("Insert INTO Entries (date, task_id, member_id, accomplished, learned, next_steps, photo_link, imgKey) VALUES (?,?,?,?,?,?,?,?)", (date, taskId, memberId, accomplished, learned, nextSteps, photoLink, photo))
+        
+        dbConnection.execute("Insert INTO Entries (date, task_id, member_id, accomplished, learned, next_steps, imgKey) VALUES (?,?,?,?,?,?,?)", (date, taskId, memberId, accomplished, learned, nextSteps, photo))
 
     def migrate(self, dbConnection, dbSchemaVersion):
         pass
@@ -67,10 +64,10 @@ class Entries():
             next = dateList[i - 1]
         return (prev, next)
 
-    def getDateTasksDictionary(self, dateStr, dbConnection):
+    def getDateTasksDictionary(self, dateStr, dbConnection, smugmugConfig):
         entryDict = {}
         for row in dbConnection.execute("""
-           SELECT tasks.name, members.name, accomplished, learned, next_steps, photo_link
+           SELECT tasks.name, members.name, accomplished, learned, next_steps, photo_link, imgkey, Entries.id
            FROM Entries
            INNER JOIN tasks
             ON Entries.task_id = Tasks.id
@@ -78,11 +75,26 @@ class Entries():
             ON Entries.member_id = Members.id
            WHERE (date = ?)       
             """,(dateStr,)):
-            newEntry = Entry(dateStr, row[0], row[1], row[2], row[3], row[4], row[5])
+            if not(row[5]):
+                if row[6]:
+                    photoLink = smugmug.get_medium_link(row[6], smugmugConfig)
+                    entryID = row[7]
+                    print(entryID)
+                    dbConnection.execute("""
+                    UPDATE Entries
+                    SET photo_link = ?
+                    WHERE id = ?
+                    """, (photoLink, entryID))
+                    newEntry = Entry(dateStr, row[0], row[1], row[2], row[3], row[4], photoLink)
+                else:
+                    newEntry = Entry(dateStr, row[0], row[1], row[2], row[3], row[4], row[5])
+            else:
+                newEntry = Entry(dateStr, row[0], row[1], row[2], row[3], row[4], row[5])
             if not(row[0] in entryDict.keys()):
                 entryDict[row[0]] = [newEntry]
             else:
                 entryDict[row[0]].append(newEntry)
+
         return entryDict
     
     

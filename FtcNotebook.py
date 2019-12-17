@@ -1,5 +1,6 @@
 import os
 import sqlite3
+import json
 import cherrypy
 from mako.lookup import TemplateLookup
 import yaml
@@ -83,7 +84,7 @@ class FtcNotebook(object):
         nextEntry = ''
         
         with self.dbConnect() as connection:
-            tasksDictionary = self.entries.getDateTasksDictionary(dateString, connection)
+            tasksDictionary = self.entries.getDateTasksDictionary(dateString, connection, smugmugConfig)
             (previousEntry, nextEntry) = self.entries.getPrevNext(connection, dateString)
         return self.template('viewEntry.mako', previousEntry=previousEntry, nextEntry=nextEntry, tasksDictionary=tasksDictionary, pageTitle=dateString, destination=destination)    
         # if destination == "Screen":
@@ -92,5 +93,6 @@ class FtcNotebook(object):
         #     return self.template('printerFriendly.mako', minutes=Minutes(filename), pageTitle=filename[5:-5])
 
 if __name__ == "__main__":
-    cherrypy.quickstart(FtcNotebook(), config='development.conf')
     smugmugConfig = json.load(open('secrets.json', 'r'))
+    cherrypy.quickstart(FtcNotebook(), config='development.conf')
+   
