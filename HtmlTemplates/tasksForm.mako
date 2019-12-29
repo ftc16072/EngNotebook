@@ -22,6 +22,7 @@
     <table style="width:75%">
     <tr>
     <th>Name</th>
+    <th>Count</th>
     <th>Working On</th> 
     <th>Completed</th>
     <th>Abandonded</th>
@@ -29,6 +30,7 @@
     % for task in taskList:
     <tr>
         <td ><a href='/viewTask?taskId=${task.taskId}'>${task.name}</td> 
+        <td style="text-align:center">${task.count}</td> 
         % for stage in [TaskStages.workingOn, TaskStages.completed, TaskStages.abandoned]:
             <td style="text-align:center">
             <input type="radio" name="${task.taskId}" value="${stage.value}"

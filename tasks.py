@@ -9,10 +9,11 @@ class TaskStages(IntEnum):
         
 
 class Task():
-    def __init__(self, taskId, name, stage):
+    def __init__(self, taskId, name, stage, count):
         self.taskId = taskId
         self.name = name
         self.stage = stage
+        self.count = count
     
     def __str__(self):
         return f"ID:{self.taskId} -- Name:{self.name} -- stage:{self.stage}"
@@ -41,13 +42,15 @@ class Tasks():
     def getAllTaskList(self, dbConnection):
         tasksList = []
         for row in dbConnection.execute("SELECT id, name, stage FROM tasks ORDER BY stage ASC, name ASC", ()):
-            tasksList.append(Task(row[0], row[1], row[2]))
+            (count,) = dbConnection.execute("SELECT count(*) FROM entries WHERE task_id = ?", (row[0],)).fetchone()
+            tasksList.append(Task(row[0], row[1], row[2], count))
         return tasksList
 
     def getWorkingTaskList(self, dbConnection):
         tasksList = []
         for row in dbConnection.execute("SELECT id, name, stage FROM tasks WHERE stage = ? ORDER BY name ASC", (TaskStages.workingOn,)):
-            tasksList.append(Task(row[0], row[1], row[2]))
+            (count,) = dbConnection.execute("SELECT count(*) FROM entries WHERE task_id = ?", (row[0],)).fetchone()
+            tasksList.append(Task(row[0], row[1], row[2], count))
         return tasksList
 
     def getTaskId(self, dbconnection, taskText):
