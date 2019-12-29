@@ -64,6 +64,15 @@ class Entries():
             next = dateList[i - 1]
         return (prev, next)
 
+    def updateSmugmugLink(self, dbConnection, smugmugConfig, entryID, imgKey):
+        photoLink = smugmug.get_medium_link(imgKey, smugmugConfig)
+        dbConnection.execute("""
+                    UPDATE Entries
+                    SET photo_link = ?
+                    WHERE id = ?
+                    """, (photoLink, entryID))
+        return photoLink
+
     def getDateTasksDictionary(self, dateStr, dbConnection, smugmugConfig):
         entryDict = {}
         for row in dbConnection.execute("""
@@ -77,14 +86,7 @@ class Entries():
             """,(dateStr,)):
             if not(row[5]):
                 if row[6]:
-                    photoLink = smugmug.get_medium_link(row[6], smugmugConfig)
-                    entryID = row[7]
-                    print(entryID)
-                    dbConnection.execute("""
-                    UPDATE Entries
-                    SET photo_link = ?
-                    WHERE id = ?
-                    """, (photoLink, entryID))
+                    photoLink = updateSmugmugLink(dbConnection, smugmugConfig, row[7], row[6])
                     newEntry = Entry(dateStr, row[0], row[1], row[2], row[3], row[4], photoLink)
                 else:
                     newEntry = Entry(dateStr, row[0], row[1], row[2], row[3], row[4], row[5])
@@ -96,6 +98,34 @@ class Entries():
                 entryDict[row[0]].append(newEntry)
 
         return entryDict
+        
+    def getDateDictionary(self, taskId, dbConnection, smugmugConfig):
+        entryDict = {}
+        for row in dbConnection.execute("""
+           SELECT tasks.name, members.name, accomplished, photo_link, imgkey, Entries.id, date
+           FROM Entries
+           INNER JOIN tasks
+            ON Entries.task_id = Tasks.id
+           INNER JOIN members
+            ON Entries.member_id = Members.id
+           WHERE (Tasks.id = ?)
+            """,(taskId,)):
+            taskName = row[0]
+            if not(row[3]):
+                if row[4]:
+                    photoLink = updateSmugmugLink(dbConnection, smugmugConfig, row[5], row[4])
+                    newEntry = Entry(date=row[6], taskName=row[0], memberName=row[1], accomplished=row[2], learned="", nextSteps="", photoLink=photoLink)
+                else:
+                    newEntry = Entry(date=row[6], taskName=row[0], memberName=row[1], accomplished=row[2], learned="", nextSteps="", photoLink="")
+            else:
+                newEntry = Entry(date=row[6], taskName=row[0], memberName=row[1], accomplished=row[2],learned="", nextSteps="", photoLink=row[3])
+            if not(row[6] in entryDict.keys()):
+                entryDict[row[6]] = [newEntry]
+            else:
+                entryDict[row[6]].append(newEntry)
+
+        return (entryDict, taskName)
+
     
     
 

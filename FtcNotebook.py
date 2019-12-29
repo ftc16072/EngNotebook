@@ -87,10 +87,13 @@ class FtcNotebook(object):
             tasksDictionary = self.entries.getDateTasksDictionary(dateString, connection, smugmugConfig)
             (previousEntry, nextEntry) = self.entries.getPrevNext(connection, dateString)
         return self.template('viewEntry.mako', previousEntry=previousEntry, nextEntry=nextEntry, tasksDictionary=tasksDictionary, pageTitle=dateString, destination=destination)    
-        # if destination == "Screen":
-        #     return self.template('viewEntry.mako', minutes=Minutes(filename), pageTitle=filename[5:-5])    
-        # else:
-        #     return self.template('printerFriendly.mako', minutes=Minutes(filename), pageTitle=filename[5:-5])
+
+    @cherrypy.expose
+    def viewTask(self, taskId):
+        with self.dbConnect() as connection:
+            (dateDictionary, taskName) = self.entries.getDateDictionary(taskId, connection, smugmugConfig)
+        return self.template('viewTask.mako', dateDictionary=dateDictionary, pageTitle=taskName)
+    
 
 if __name__ == "__main__":
     smugmugConfig = json.load(open('secrets.json', 'r'))

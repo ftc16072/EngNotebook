@@ -28,7 +28,7 @@
   </tr>
     % for task in taskList:
     <tr>
-        <td >${task.name}</td> 
+        <td ><a href='/viewTask?taskId=${task.taskId}'>${task.name}</td> 
         % for stage in [TaskStages.workingOn, TaskStages.completed, TaskStages.abandoned]:
             <td style="text-align:center">
             <input type="radio" name="${task.taskId}" value="${stage.value}"
