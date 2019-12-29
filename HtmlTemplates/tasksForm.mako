@@ -29,7 +29,7 @@
   </tr>
     % for task in taskList:
     <tr>
-        <td ><a href='/viewTask?taskId=${task.taskId}'>${task.name}</td> 
+        <td ><a href='/viewTask?taskId=${task.taskId}'>${task.name} (${task.taskId})</a></td> 
         <td style="text-align:center">${task.count}</td> 
         % for stage in [TaskStages.workingOn, TaskStages.completed, TaskStages.abandoned]:
             <td style="text-align:center">
