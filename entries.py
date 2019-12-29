@@ -108,7 +108,7 @@ class Entries():
             ON Entries.task_id = Tasks.id
            INNER JOIN members
             ON Entries.member_id = Members.id
-           WHERE (Tasks.id = ?)
+           WHERE (Tasks.id = ?) ORDER BY date ASC
             """,(taskId,)):
             taskName = row[0]
             if not(row[3]):

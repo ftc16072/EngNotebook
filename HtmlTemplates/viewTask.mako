@@ -30,14 +30,12 @@
 
                             print(photos)
                     %>
-            <td><UL>
-               <LI>Accomplished
+            <td>
                <UL>
                  %for item in accomplished:
                       <LI>${item} </LI>
                   %endfor
-               </UL></LI>
-            </UL>
+               </UL>
             </td>
             <td>
             %for member, photo in photos.items():
