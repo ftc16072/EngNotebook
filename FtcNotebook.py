@@ -94,6 +94,13 @@ class FtcNotebook(object):
             (dateDictionary, taskName) = self.entries.getDateDictionary(taskId, connection, smugmugConfig)
         return self.template('viewTask.mako', dateDictionary=dateDictionary, pageTitle=taskName)
     
+    @cherrypy.expose
+    def viewTaskByName(self, taskName):
+        with self.dbConnect() as connection:
+            taskId = self.tasks.getTaskId(connection, taskName)
+            (dateDictionary, taskName) = self.entries.getDateDictionary(taskId, connection, smugmugConfig)
+        return self.template('viewTask.mako', dateDictionary=dateDictionary, pageTitle=taskName)
+    
 
 if __name__ == "__main__":
     smugmugConfig = json.load(open('secrets.json', 'r'))

@@ -1,6 +1,7 @@
 <%def name="title()">FTC16072 - ${pageTitle}</%def>
 <%def name="head()"></%def>
 <%inherit file = "base.mako"/>
+    <a href="/"><button>Home</button></a>
     <h1>${pageTitle}</h1>
     <table class="Minutes">
         <tr>
@@ -11,7 +12,7 @@
         
         % for date, entries in dateDictionary.items():
             <tr>
-                    <td class="header"><a href='/viewEntry?dateString=${date}&destination=Screen'>${date}</td>
+                    <td class="header"><a href='/viewEntry?dateString=${date}&destination=Screen'>${date}</a></td>
                     <%
                         teamMembers = []
                         accomplished = []

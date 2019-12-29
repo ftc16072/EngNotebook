@@ -20,7 +20,12 @@
         
         % for item, entries in tasksDictionary.items():
             <tr>
-                    <td class="header">${item}</td>
+                    % if destination == "Screen":
+                        <td class="header"><a href='/viewTaskByName?taskName=${item}'>${item}</a></td>
+                    % else:
+                        <td class="header">${item}</td>
+                    % endif
+                    
                     <%
                         teamMembers = []
                         accomplished = []
