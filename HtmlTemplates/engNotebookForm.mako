@@ -3,6 +3,8 @@
 <%inherit file = "base.mako"/>
 <a href="index">Back<a>
 <form action="addEntry" method="post" enctype="multipart/form-data">
+    <label for="date">Date (yyyy-mm-dd):</label>
+    <input type="date" name="dateString" required pattern="\d{4}-\d{2}-\d{2}">${dateString}</input>
     <label for="memberId">Your Name:</label> 
     <select name ="memberId">
         % for member in members:

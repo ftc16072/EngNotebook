@@ -37,23 +37,22 @@ class FtcNotebook(object):
 
     @cherrypy.expose
     def newEntry(self):
-
+        now = datetime.datetime.now()
+        date = now.strftime("%Y-%m-%d")
         with self.dbConnect()  as connection:
             memberList = self.members.getMembers(connection)
             taskList = self.tasks.getWorkingTaskList(connection)
-        return self.template('engNotebookForm.mako', members=memberList, tasks=taskList)
+        return self.template('engNotebookForm.mako', dateString=date, members=memberList, tasks=taskList)
 
     @cherrypy.expose
-    def addEntry(self, memberId, taskId, accomplished, learning, next_steps, photo):
+    def addEntry(self, dateString, memberId, taskId, accomplished, learning, next_steps, photo):
         if photo.filename:
             imgKey = smugmug.upload_data(photo.filename, photo.file.read(), smugmugConfig)
         else:
             imgKey = ""
 
-        now = datetime.datetime.now()
-        date = now.strftime("%Y-%m-%d")
         with self.dbConnect()  as connection:
-            self.entries.addEntry(connection, date, taskId, memberId, accomplished, learning, next_steps, imgKey, smugmugConfig)
+            self.entries.addEntry(connection, dateString, taskId, memberId, accomplished, learning, next_steps, imgKey, smugmugConfig)
         
         return self.newEntry()
     
