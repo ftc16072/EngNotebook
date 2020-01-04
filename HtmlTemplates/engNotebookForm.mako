@@ -4,7 +4,7 @@
 <a href="index">Back<a>
 <form action="addEntry" method="post" enctype="multipart/form-data">
     <label for="date">Date (yyyy-mm-dd):</label>
-    <input type="date" name="dateString" value="${dateString}required pattern="\d{4}-\d{2}-\d{2}"/>
+    <input type="date" name="dateString" value='${dateString}required pattern="\d{4}-\d{2}-\d{2}"'/>
     <br/>
     <label for="memberId">Your Name:</label> 
     <select name ="memberId">
