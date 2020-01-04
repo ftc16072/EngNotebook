@@ -36,7 +36,7 @@ class FtcNotebook(object):
         return self.template('home.mako', dateList=dateList)
    
     @cherrypy.expose
-    def entries(self):
+    def listEntries(self):
         with self.dbConnect()  as connection:
             dateList = self.entries.getDateList(connection)
         

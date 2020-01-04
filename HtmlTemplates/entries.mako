@@ -2,5 +2,5 @@
 <%def name="head()"></%def>
 <%inherit file = "base.mako"/>
 % for dateItem in dateList:
-<A HREF="\viewEntry?dateString=${dateItem}&destination=Print">${dateItem}</A>
+<A HREF="\viewEntry?dateString=${dateItem}&destination=Print">${dateItem}</A><br/>
 % endfor
