@@ -7,7 +7,7 @@
         <tr>
             <th class="date">Date</th>
             <th class="accomplished">Accomplished</th>
-            <th class="pictures">Picture(s)</th>
+            <th class="picture">Picture(s)</th>
         </tr>
         
         % for date, entries in dateDictionary.items():

@@ -43,6 +43,11 @@ table.Minutes th.details{
 table.Minutes th.picture{
     width: 40%;
 }
+
+table.Minutes th.accomplished{
+    width: 50%
+}
+
 table.Minutes table.details{
     width: 100%;
     height: 100%;
