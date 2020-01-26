@@ -1,7 +1,9 @@
 <%def name="title()">FTC16072 - ${pageTitle}</%def>
 <%def name="head()"></%def>
 <%inherit file = "base.mako"/>
+% if destination == "Screen":
     <a href="/"><button>Home</button></a>
+% endif
     <h1>${pageTitle}</h1>
     <table class="Minutes">
         <tr>
