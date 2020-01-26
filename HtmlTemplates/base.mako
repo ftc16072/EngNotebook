@@ -8,7 +8,11 @@
    <link rel="stylesheet" href="static/style.css">
   
 </head>
+% if destination && destination == "Screen":
 <body>
+% else
+<body class="Print">
+% endif
     ${self.body()}
 
 </body>
