@@ -8,9 +8,9 @@
    <link rel="stylesheet" href="static/style.css">
   
 </head>
-% if destination && destination == "Screen":
+% if destination and destination == "Screen":
 <body>
-% else
+% else:
 <body class="Print">
 % endif
     ${self.body()}
