@@ -104,7 +104,7 @@ class FtcNotebook(object):
     def viewTaskByName(self, taskName, destination="Screen"):
         with self.dbConnect() as connection:
             taskId = self.tasks.getTaskId(connection, taskName)
-        return self.viewTask(self, taskId, destination)
+        return self.viewTask(taskId, destination)
       
 
 if __name__ == "__main__":
