@@ -26,7 +26,7 @@
 <th><br/>
 <form action=viewTask method="post" enctype="multipart/form-data">
         <label for="task">What Task</label>
-        <select name="task_id">
+        <select name="taskId">
                         % for task in taskList:
                                 <option value=${task}>${task.name}</option>
                         % endfor
