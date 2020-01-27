@@ -28,7 +28,7 @@
         <label for="task">What Task</label>
         <select name="taskId">
                         % for task in taskList:
-                                <option value=${task}>${task.name}</option>
+                                <option value=${task.taskId}>${task.name}</option>
                         % endfor
                 </select>
         <br/>
