@@ -34,7 +34,7 @@ class FtcNotebook(object):
             dateList = self.entries.getDateList(connection)
             taskList = self.tasks.getAllTaskList(connection)
         
-        return self.template('home.mako', dateList=dateList,taskList=taskList)
+        return self.template('home.mako', dateList=dateList,taskList=taskList,destination="Screen")
    
     @cherrypy.expose
     def listEntries(self):

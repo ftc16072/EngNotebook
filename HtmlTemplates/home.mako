@@ -7,7 +7,7 @@
 <th><button onclick= "window.location.href = '/tasksForm';">Update/Add Tasks</button></th>
 </tr>
 <tr>
-<th> <br/>
+<td>
 <form action=viewEntry method="post" enctype="multipart/form-data">
         <label for="dateString">What date</label>
                 <select name="dateString">
@@ -20,10 +20,8 @@
         <input type= "radio" name="destination" value="Printer">Printer</input>
         <br/><input type="submit" value="View Entry"/>
 </form>
-</th>
 </tr>
-<tr>
-<th><br/>
+<td>
 <form action=viewTask method="post" enctype="multipart/form-data">
         <label for="task">What Task</label>
         <select name="taskId">
@@ -36,6 +34,6 @@
         <input type= "radio" name="destination" value="Printer">Printer</input>
         <br/><input type="submit" value="View Task"/>
 </form>
-
-
+</td>
+</tr>
 </table>
