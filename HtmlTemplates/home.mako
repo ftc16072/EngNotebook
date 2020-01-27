@@ -22,7 +22,20 @@
 </form>
 </th>
 </tr>
-
+<tr>
+<th><br/>
+<form action=viewTask method="post" enctype="multipart/form-data">
+        <label for="task">What Task</label>
+        <select name="task_id">
+                        % for task in taskList:
+                                <option value=${task}>${task.name}</option>
+                        % endfor
+                </select>
+        <br/>
+        <input type="radio" name="destination" value="Screen" checked>Screen</input>
+        <input type= "radio" name="destination" value="Printer">Printer</input>
+        <br/><input type="submit" value="View Task"/>
+</form>
 
 
 </table>

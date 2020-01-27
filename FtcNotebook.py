@@ -32,8 +32,9 @@ class FtcNotebook(object):
     def index(self):
         with self.dbConnect()  as connection:
             dateList = self.entries.getDateList(connection)
+            taskList = self.tasks.getAllTaskList(connection)
         
-        return self.template('home.mako', dateList=dateList)
+        return self.template('home.mako', dateList=dateList,taskList=taskList)
    
     @cherrypy.expose
     def listEntries(self):
