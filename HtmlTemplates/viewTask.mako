@@ -14,7 +14,11 @@
         
         % for date, entries in dateDictionary.items():
             <tr>
-                    <td class="header"><a href='/viewEntry?dateString=${date}&destination=Screen'>${date}</a></td>
+             % if destination == "Screen":
+                       <td class="header"><a href='/viewEntry?dateString=${date}&destination=Screen'>${date}</a></td>
+                    % else:
+                       <td class="header">${date}</td>
+                    % endif
                     <%
                         teamMembers = []
                         accomplished = []
