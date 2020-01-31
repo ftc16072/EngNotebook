@@ -46,7 +46,7 @@
                                 nextSteps.append(entry.memberName + ": " + entry.nextSteps + comma)
                             if entry.photoLink:
                                 if destination == 'Screen':
-                                   photos.append(f"<A HREF='/gotoSmugmug?imgKey={entry.imgKey}'><IMG SRC='{entry.photoLink}' ALT='Photo' /></A>") 
+                                   photos.append(f"<A HREF='/gotoSmugmug?imgkey={entry.imgKey}'><IMG SRC='{entry.photoLink}' ALT='Photo' /></A>") 
                                 else:
                                    photos.append(f"<IMG SRC='{entry.photoLink}' ALT='Photo'/>") 
                     %>
