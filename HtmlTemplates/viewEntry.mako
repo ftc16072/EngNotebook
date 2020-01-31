@@ -45,11 +45,10 @@
                             if entry.nextSteps:
                                 nextSteps.append(entry.memberName + ": " + entry.nextSteps + comma)
                             if entry.photoLink:
-                                % if destination == 'Screen':
+                                if destination == 'Screen':
                                    photos.append(f"<A HREF='/gotoSmugmug?{entry.imgKey}'><IMG SRC={entry.photoLink} ALT='Photo' /></A>") 
-                                % else:
-                                   photos.append(f"<IMG SRC={entry.photoLink} ALT='Photo'/>")
-                                % endif     
+                                else:
+                                   photos.append(f"<IMG SRC={entry.photoLink} ALT='Photo'/>") 
                     %>
             <td><UL>
                <LI>Accomplished
