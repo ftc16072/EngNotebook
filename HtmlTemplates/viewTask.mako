@@ -22,7 +22,7 @@
                     <%
                         teamMembers = []
                         accomplished = []
-                        photos = {}
+                        photos = []
                         for entry in entries:
                             if entries.index(entry) == len(entries) - 1:
                                 comma = " "
@@ -32,9 +32,10 @@
                             if entry.accomplished:
                                 accomplished.append(entry.memberName + ": " + entry.accomplished + comma)
                             if entry.photoLink:
-                                photos[entry.memberName] = entry.photoLink
-
-                            print(photos)
+                                if destination == 'Screen':
+                                   photos.append(f"<A HREF='/gotoSmugmug?imgkey={entry.imgKey}'><IMG SRC='{entry.photoLink}' ALT='Photo' /></A>") 
+                                else:
+                                   photos.append(f"<IMG SRC='{entry.photoLink}' ALT='Photo'/>") 
                     %>
             <td>
                <UL>
@@ -46,7 +47,7 @@
             <td>
             %for member, photo in photos.items():
                 <span class="image-container">
-                <IMG SRC=${photo} ALT="Photo" />
+                ${photo | n}
                 </span>
             %endfor
             </td>
