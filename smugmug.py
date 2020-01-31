@@ -55,6 +55,13 @@ def get_medium_link(imgKey, config):
         link = r.json()['Response']['ImageSizes']['LargestImageUrl']
     return link
 
+def getLargestImage(imgKey, config):
+    headers = {'Accept': 'application/json'}
+    params = {'APIKey': config['app_key']}
+    r = requests.get(base_api + imgKey + '-0!sizes',
+                     headers=headers,
+                     params=params)
+    return r.json()['Response']['ImageSizes']['LargestImageUrl']
 
 if __name__ == "main":
     config = json.load(open('secrets.json', 'r'))
