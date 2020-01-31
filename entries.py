@@ -7,7 +7,7 @@ import smugmug
 import datetime
 
 class Entry():
-    def __init__(self, date, taskName, memberName, accomplished, learned, nextSteps, photoLink):
+    def __init__(self, date, taskName, memberName, accomplished, learned, nextSteps, photoLink, imgKey):
         self.date = date
         self.taskName = taskName
         self.memberName = memberName
@@ -15,6 +15,7 @@ class Entry():
         self.learned = learned
         self.nextSteps = nextSteps
         self.photoLink = photoLink
+        self.imgKey = imgKey
     
     def __str__(self):
         return f"Date: {self.date} Task: {self.taskName} Member: {self.memberName}"
@@ -87,11 +88,11 @@ class Entries():
             if not(row[5]):
                 if row[6]:
                     photoLink = self.updateSmugmugLink(dbConnection, smugmugConfig, row[7], row[6])
-                    newEntry = Entry(dateStr, row[0], row[1], row[2], row[3], row[4], photoLink)
+                    newEntry = Entry(dateStr, row[0], row[1], row[2], row[3], row[4], photoLink, row[6])
                 else:
-                    newEntry = Entry(dateStr, row[0], row[1], row[2], row[3], row[4], row[5])
+                    newEntry = Entry(dateStr, row[0], row[1], row[2], row[3], row[4], row[5], row[6])
             else:
-                newEntry = Entry(dateStr, row[0], row[1], row[2], row[3], row[4], row[5])
+                newEntry = Entry(dateStr, row[0], row[1], row[2], row[3], row[4], row[5], row[6])
             if not(row[0] in entryDict.keys()):
                 entryDict[row[0]] = [newEntry]
             else:
@@ -115,11 +116,11 @@ class Entries():
             if not(row[3]):
                 if row[4]:
                     photoLink = self.updateSmugmugLink(dbConnection, smugmugConfig, row[5], row[4])
-                    newEntry = Entry(date=row[6], taskName=row[0], memberName=row[1], accomplished=row[2], learned="", nextSteps="", photoLink=photoLink)
+                    newEntry = Entry(date=row[6], taskName=row[0], memberName=row[1], accomplished=row[2], learned="", nextSteps="", photoLink=photoLink, imgKey=row[6])
                 else:
-                    newEntry = Entry(date=row[6], taskName=row[0], memberName=row[1], accomplished=row[2], learned="", nextSteps="", photoLink="")
+                    newEntry = Entry(date=row[6], taskName=row[0], memberName=row[1], accomplished=row[2], learned="", nextSteps="", photoLink="", imgKey=row[6])
             else:
-                newEntry = Entry(date=row[6], taskName=row[0], memberName=row[1], accomplished=row[2],learned="", nextSteps="", photoLink=row[3])
+                newEntry = Entry(date=row[6], taskName=row[0], memberName=row[1], accomplished=row[2],learned="", nextSteps="", photoLink=row[3], imgKey=row[6])
             if not(row[6] in entryDict.keys()):
                 entryDict[row[6]] = [newEntry]
             else:
