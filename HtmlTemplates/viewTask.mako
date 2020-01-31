@@ -45,7 +45,7 @@
                </UL>
             </td>
             <td>
-            %for member, photo in photos.items():
+            %for photo in photos:
                 <span class="image-container">
                 ${photo | n}
                 </span>
