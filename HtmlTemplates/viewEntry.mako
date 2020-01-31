@@ -46,9 +46,9 @@
                                 nextSteps.append(entry.memberName + ": " + entry.nextSteps + comma)
                             if entry.photoLink:
                                 if destination == 'Screen':
-                                   photos.append(f"<A HREF='/gotoSmugmug?{entry.imgKey}'><IMG SRC={entry.photoLink} ALT='Photo' /></A>") 
+                                   photos.append(f"<A HREF='/gotoSmugmug?imgKey={entry.imgKey}'><IMG SRC='{entry.photoLink}' ALT='Photo' /></A>") 
                                 else:
-                                   photos.append(f"<IMG SRC={entry.photoLink} ALT='Photo'/>") 
+                                   photos.append(f"<IMG SRC='{entry.photoLink}' ALT='Photo'/>") 
                     %>
             <td><UL>
                <LI>Accomplished
@@ -74,7 +74,7 @@
             <td>
             %for photo in photos:
                 <span class="image-container">
-                ${photo}
+                ${photo | n}
                 </span>
             %endfor
             </td>
