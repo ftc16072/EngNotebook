@@ -116,11 +116,11 @@ class Entries():
             if not(row[3]):
                 if row[4]:
                     photoLink = self.updateSmugmugLink(dbConnection, smugmugConfig, row[5], row[4])
-                    newEntry = Entry(date=row[6], taskName=row[0], memberName=row[1], accomplished=row[2], learned="", nextSteps="", photoLink=photoLink, imgKey=row[6])
+                    newEntry = Entry(date=row[6], taskName=row[0], memberName=row[1], accomplished=row[2], learned="", nextSteps="", photoLink=photoLink, imgKey=row[4])
                 else:
-                    newEntry = Entry(date=row[6], taskName=row[0], memberName=row[1], accomplished=row[2], learned="", nextSteps="", photoLink="", imgKey=row[6])
+                    newEntry = Entry(date=row[6], taskName=row[0], memberName=row[1], accomplished=row[2], learned="", nextSteps="", photoLink="", imgKey=row[4])
             else:
-                newEntry = Entry(date=row[6], taskName=row[0], memberName=row[1], accomplished=row[2],learned="", nextSteps="", photoLink=row[3], imgKey=row[6])
+                newEntry = Entry(date=row[6], taskName=row[0], memberName=row[1], accomplished=row[2],learned="", nextSteps="", photoLink=row[3], imgKey=row[4])
             if not(row[6] in entryDict.keys()):
                 entryDict[row[6]] = [newEntry]
             else:
