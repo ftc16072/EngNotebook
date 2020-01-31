@@ -106,7 +106,12 @@ class FtcNotebook(object):
         with self.dbConnect() as connection:
             taskId = self.tasks.getTaskId(connection, taskName)
         return self.viewTask(taskId, destination)
-      
+    
+    @cherrypy.expose
+    def gotoSmugmug(self, imgkey):
+        smugConfig = json.load(open('secrets.json', 'r'))
+        new_url = smugmug.getLargestImage(imgkey, smugConfig)
+        raise cherrypy.HTTPRedirect(new_url, status=301) 
 
 if __name__ == "__main__":
     smugmugConfig = json.load(open('secrets.json', 'r'))
