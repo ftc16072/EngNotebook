@@ -31,7 +31,7 @@
                         accomplished = []
                         learned = []
                         nextSteps = []
-                        photos = {}
+                        photos = []
                         for entry in entries:
                             if entries.index(entry) == len(entries) - 1:
                                 comma = " "
@@ -45,9 +45,11 @@
                             if entry.nextSteps:
                                 nextSteps.append(entry.memberName + ": " + entry.nextSteps + comma)
                             if entry.photoLink:
-                                photos[entry.memberName] = entry.photoLink
-
-                            print(photos)
+                                % if destination == 'Screen':
+                                   photos.append(f"<A HREF='/gotoSmugmug?{entry.imgKey}'><IMG SRC={entry.photoLink} ALT='Photo' /></A>") 
+                                % else:
+                                   photos.append(f"<IMG SRC={entry.photoLink} ALT='Photo'/>")
+                                % endif     
                     %>
             <td><UL>
                <LI>Accomplished
@@ -71,9 +73,9 @@
             </UL>
             </td>
             <td>
-            %for member, photo in photos.items():
+            %for photo in photos:
                 <span class="image-container">
-                <IMG SRC=${photo} ALT="Photo" />
+                ${photo}
                 </span>
             %endfor
             </td>

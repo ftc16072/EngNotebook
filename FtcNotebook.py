@@ -106,6 +106,10 @@ class FtcNotebook(object):
         with self.dbConnect() as connection:
             taskId = self.tasks.getTaskId(connection, taskName)
         return self.viewTask(taskId, destination)
+    
+    @cherrypy.expose
+    def gotoSmugmug(self, imgkey):
+        return f'<HTML><BODY><H1>{imgKey}</H1></BODY></HTML>'
       
 
 if __name__ == "__main__":
