@@ -1,4 +1,5 @@
 import requests
+import yaml
 import json
 import os
 import logging
@@ -14,12 +15,21 @@ headers = {
     'X-Smug-Verson': 'v2'
 }
 
-def upload_data(filename, img_data, config):
+
+
+def upload_data(filename, img_data, config, year):
+    # if year == 2019:
+    #     headers['X-Smug-AlbumURI'] = '/api/v2/album/VgQcSw'
+    # elif year == 2020:
+    #     headers['X-Smug-AlbumURI'] = '/api/v2/album/VgQcSw'
+    # else:
+    #     headers['X-Smug-AlbumURI'] = '/api/v2/album/VgQcSw'
+        
     session = OAuth1Session(consumer_key=config['app_key'],
                             consumer_secret=config['app_secret'],
                             access_token=config['user_token'],
                             access_token_secret=config['user_secret'])
-
+    print("*****************" + filename)
     headers['X-Smug-FileName'] = filename
     headers['Content-Length'] = str(len(img_data))
     headers['Content-Type'] = image_type = mimetypes.guess_type(filename)[0]
@@ -33,9 +43,9 @@ def upload_data(filename, img_data, config):
 
     return imgKey
 
-def upload_file(filename, config):
+def upload_file(filename, config, year):
     img_data = open(filename, 'rb').read()
-    return upload_data(filename, img_data, config)
+    return upload_data(filename, img_data, year)
 
   
 

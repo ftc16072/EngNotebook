@@ -29,6 +29,7 @@
                     <%
                         teamMembers = []
                         accomplished = []
+                        why = []
                         learned = []
                         nextSteps = []
                         photos = []
@@ -40,6 +41,7 @@
                             teamMembers.append(entry.memberName + comma)
                             if entry.accomplished:
                                 accomplished.append(entry.memberName + ": " + entry.accomplished + comma)
+                            why.append(entry.why)
                             if entry.learned:
                                 learned.append(entry.memberName + ": " + entry.learned + comma)
                             if entry.nextSteps:
@@ -53,9 +55,16 @@
             <td><UL>
                <LI>Accomplished
                <UL>
-                 %for item in accomplished:
-                      <LI>${item} </LI>
-                  %endfor
+                    %for item in accomplished:
+                        <LI>${item} <UL>
+                            <%
+                                whytext = why[accomplished.index(item)]
+                            %>
+                            %if whytext:
+                                <li>Why: ${whytext}</li>
+                            %endif
+                        </UL></LI>
+                    %endfor
                </UL></LI>
                <LI>Learning
                <UL>

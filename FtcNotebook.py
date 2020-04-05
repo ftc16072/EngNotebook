@@ -1,9 +1,9 @@
 import os
+import yaml
 import sqlite3
 import json
 import cherrypy
 from mako.lookup import TemplateLookup
-import yaml
 import datetime
 import glob
 from entries import Entries
@@ -20,7 +20,14 @@ class FtcNotebook(object):
         self.lookup = TemplateLookup(directories = ['HtmlTemplates'], default_filters=['h'])
         self.tasks = Tasks()
         self.members = Members()
-        self.entries = Entries() 
+        self.entries = Entries()
+        with self.dbConnect() as connection:
+            if not os.path.exists(DB_STRING):
+                self.entries.createTable(connection)
+            else:
+                data = connection.execute("PRAGMA schema_version").fetchone()
+                if data[0] != self.entries.SCHEMA_VERSION:
+                    self.entries.migrate(connection, data[0])
 
     def dbConnect(self):
         return sqlite3.connect(DB_STRING, detect_types=sqlite3.PARSE_DECLTYPES)
@@ -53,14 +60,15 @@ class FtcNotebook(object):
         return self.template('engNotebookForm.mako', dateString=date, members=memberList, tasks=taskList)
 
     @cherrypy.expose
-    def addEntry(self, dateString, memberId, taskId, accomplished, learning, next_steps, photo):
+    def addEntry(self, dateString, memberId, taskId, accomplished, why, learning, next_steps, photo):
         if photo.filename:
-            imgKey = smugmug.upload_data(photo.filename, photo.file.read(), smugmugConfig)
+            print("******" + dateString[:4])
+            imgKey = smugmug.upload_data(photo.filename, photo.file.read(), smugmugConfig, dateString[:4])
         else:
             imgKey = ""
 
         with self.dbConnect()  as connection:
-            self.entries.addEntry(connection, dateString, taskId, memberId, accomplished, learning, next_steps, imgKey, smugmugConfig)
+            self.entries.addEntry(connection, dateString, taskId, memberId, accomplished, why, learning, next_steps, imgKey, smugmugConfig)
         
         return self.newEntry()
     
