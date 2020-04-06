@@ -18,12 +18,12 @@ headers = {
 
 
 def upload_data(filename, img_data, config, year):
-    # if year == 2019:
-    #     headers['X-Smug-AlbumURI'] = '/api/v2/album/VgQcSw'
-    # elif year == 2020:
-    #     headers['X-Smug-AlbumURI'] = '/api/v2/album/VgQcSw'
-    # else:
-    #     headers['X-Smug-AlbumURI'] = '/api/v2/album/VgQcSw'
+    if year == 2019:
+        headers['X-Smug-AlbumURI'] = '/api/v2/album/VgQcSw'
+    elif year == 2020:
+        headers['X-Smug-AlbumURI'] = '/api/v2/album/2z78cj'
+    else:
+        headers['X-Smug-AlbumURI'] = '/api/v2/album/2z78cj'
         
     session = OAuth1Session(consumer_key=config['app_key'],
                             consumer_secret=config['app_secret'],
@@ -40,6 +40,7 @@ def upload_data(filename, img_data, config, year):
                      header_auth=True,
                      data=img_data)
     imgKey = r.json()['Image']['Key']
+    print(imgKey)
 
     return imgKey
 

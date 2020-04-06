@@ -104,14 +104,24 @@ class Entries():
             ON Entries.member_id = Members.id
            WHERE (date = ?)       
             """,(dateStr,)):
-            if not(row[5]):
-                if row[6]:
-                    photoLink = self.updateSmugmugLink(dbConnection, smugmugConfig, row[7], row[6])
-                    newEntry = Entry(dateStr, row[0], row[1], row[2],row[3], row[4], photoLink, row[6], row[7])
+            taskName = row[0]
+            memberName = row[1]
+            accomplished = row[2]
+            why = row[3]
+            learned = row[4]
+            next_steps = row[5]
+            photoLink = row[6]
+            imgKey = row[7]
+            entriesId = row[8]
+
+            if not(photoLink):
+                if imgKey:
+                    photoLink = self.updateSmugmugLink(dbConnection, smugmugConfig, entriesId, imgKey)
+                    newEntry = Entry(dateStr, taskName, memberName, accomplished, why, learned, next_steps, photoLink, imgKey)
                 else:
-                    newEntry = Entry(dateStr, row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7])
+                    newEntry = Entry(dateStr, taskName, memberName, accomplished, why, learned, next_steps, photoLink, imgKey)
             else:
-                newEntry = Entry(dateStr, row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7])
+                newEntry = Entry(dateStr, taskName, memberName, accomplished, why, learned, next_steps, photoLink, imgKey)
             if not(row[0] in entryDict.keys()):
                 entryDict[row[0]] = [newEntry]
             else:
