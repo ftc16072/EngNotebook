@@ -44,7 +44,7 @@ def upload_data(connection, filename, img_data, config, dateString):
                             consumer_secret=config['app_secret'],
                             access_token=config['user_token'],
                             access_token_secret=config['user_secret'])
-
+    print("*****************" + filename)
     headers['X-Smug-FileName'] = filename
     headers['Content-Length'] = str(len(img_data))
     headers['Content-Type'] = image_type = mimetypes.guess_type(filename)[0]
@@ -58,6 +58,12 @@ def upload_data(connection, filename, img_data, config, dateString):
     print(imgKey)
 
     return imgKey
+
+def upload_file(filename, config, year):
+    img_data = open(filename, 'rb').read()
+    return upload_data(filename, img_data, year)
+
+  
 
 
 base_api = 'https://www.smugmug.com/api/v2/image/'
@@ -86,6 +92,6 @@ def getLargestImage(imgKey, config):
 
 
 if __name__ == "main":
-    
+
     # need test code here
     pass
