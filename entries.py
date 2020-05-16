@@ -48,7 +48,7 @@ class Entries():
             next_steps TEXT,
             photo_link TEXT,
             imgKey TEXT)""")
-        dbConnection.execute("PRAGMA schema+version = ?", (SCHEMA_VERSION,))
+        dbConnection.execute("PRAGMA schema_version = ?", (SCHEMA_VERSION,))
     
 
 
