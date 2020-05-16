@@ -51,7 +51,7 @@ if __name__ == "__main__":
     with sqlite3.connect(DEFAULT_PATH) as connection:
         members = Members()
         members.createTable(connection)
-        membersList = ["Andrew Vo", "Chirag Sreedhara", "Eric Wong", "Evan Spiering", "Izaak Kreykes", "Nithya Golla", "Philip Smith", "Preeti Thirukonda", "Rishi Maroju"]
+        membersList = ["Andrew", "Chirag", "Eric", "Izaak", "Nithya", "Philip", "Preeti", "Rishi", "Arjun", "Ryan", "Nikhil"]
         members.insertMembers(connection, membersList)
 
         printList(members.getMembers(connection))

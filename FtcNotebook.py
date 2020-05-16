@@ -121,6 +121,7 @@ class FtcNotebook(object):
         new_url = smugmug.getLargestImage(imgkey, smugConfig)
         raise cherrypy.HTTPRedirect(new_url, status=301) 
 
+
 if __name__ == "__main__":
     smugmugConfig = json.load(open('secrets.json', 'r'))
     cherrypy.quickstart(FtcNotebook(), config='development.conf')

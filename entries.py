@@ -27,7 +27,7 @@ class Entry():
         return f"Date: {self.date} Task: {self.taskName} Member: {self.memberName}"
 
     def getPhotoLink(self, config):
-        return smugmug.get_medium_link(self.photo, config)
+        return smugmug.get_medium_link(self.imgKey, config)
         
 class Entries():
     def __init__(self):
@@ -170,7 +170,7 @@ if __name__ == "__main__":
     # except IOError:
     #     pass #delete File, if it doesn't exist we don't care
 
-    
+    """ 
     with sqlite3.connect(DEFAULT_PATH) as connection:
         entries = Entries()
         #entries.createTable(connection)
@@ -180,7 +180,7 @@ if __name__ == "__main__":
             print(k + ":")
             for entry in v:
                 print("-", entry)
-        
+         """
 
 # if __name__ == "__main__":
 #     Entry = Minutes('data/9.8.2019.yaml')
