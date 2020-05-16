@@ -18,7 +18,7 @@ try:
 except IOError:
     pass #delete File, if it doesn't exist we don't care
 
-with sqlite3.connect(DEFAULT_PATH) as connection:]
+with sqlite3.connect(DEFAULT_PATH) as connection:
     members.createTable(connection)
     members.insertMembers(connection, memberList)
     tasks.createTable(connection)
