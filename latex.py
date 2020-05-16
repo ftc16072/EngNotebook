@@ -17,12 +17,15 @@ class LaTeX():
         latexString += "   \\subsubsection{date} \n".format(date="{"+wholedate+"}")
         latexString += "\\begin{tabularx}{\\textwidth}{|l|X|X|} \n"
         latexString += "\\hline Task & Details & Pictures \\\\ \\hline \n"
-
+        result = "\n".join(listStrings)
 
         for task, entries in taskDict.items():
             latexString += task + " & \\begin{itemize}\n"
             for entry in entries:
-                latexString += "\\item Accomplished \n \\begin{itemize} \n  \\item " + entry.memberName + ": " + entry.accomplished + "\n \\end{itemize}"
+                whytext = "\\begin{itemize} \item Why: " + entry.why + " \\end{itemize}" if entry.why else ""
+                accomplishedString = "\\item Accomplished \n \\begin{itemize} \n  \\item " + entry.memberName + ": " + entry.accomplished + "\n" + whytext + "\\end{itemize}"
+                learnedString = "\\item Learned:"
+
 
 
 
@@ -38,8 +41,8 @@ class LaTeX():
 if __name__ == "__main__":
     latex = LaTeX()
     testDict = {
-        "task1":[Entry("2019-12-07", "task1", "Philip Smith", "Accomplished", "why", "Learned", "nextSteps", "photoLink", "imgKey")],
-        "task2":[Entry("2019-12-07", "task2", "Philip Smith", "Accomplished", "why", "Learned", "nextSteps", "photoLink", "imgKey")]
+        "task1":[Entry("2019-12-07", "task1", "Philip", "Blah", "why", "Learned", "nextSteps", "photoLink", "imgKey")],
+        "task2":[Entry("2019-12-07", "task2", "Andrew", "Accomplished", "", "Learned", "nextSteps", "photoLink", "imgKey")]
     }
     latex.entriesLaTeXFromTasksDict(testDict, "2019-12-07")
     print("nothing else for me to do")

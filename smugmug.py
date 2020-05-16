@@ -76,7 +76,7 @@ def getLargestImage(imgKey, config):
 
 if __name__ == "main":
     config = json.load(open('secrets.json', 'r'))
-    imgKey = upload_file('Duck only.png', config)
+    imgKey = upload_file('Duck only.png', config, 2019)
 
     print(f'Image Key: {imgKey}')
     print('waiting 2 seconds')
