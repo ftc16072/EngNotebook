@@ -90,8 +90,8 @@ def getLargestImage(imgKey, config):
                      params=params)
     return r.json()['Response']['ImageSizes']['LargestImageUrl']
 
-
 if __name__ == "main":
+    config = json.load(open('secrets.json', 'r'))
+    imgKey = upload_file('Duck only.png', config, 2019)
 
-    # need test code here
-    pass
+    
