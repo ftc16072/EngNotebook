@@ -11,7 +11,7 @@
 % if destination and destination == "Screen":
 <body>
 % else:
-<body class="Print">
+<body class="Screen">
 % endif
     ${self.body()}
 
