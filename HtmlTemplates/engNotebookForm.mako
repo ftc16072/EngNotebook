@@ -7,7 +7,8 @@
     <input type="date" name="dateString" value='${dateString}' required pattern="\d{4}-\d{2}-\d{2}"/>
     <br/>
     <label for="memberId">Your Name:</label> 
-    <select name ="memberId">
+    <select name ="memberId" required>
+        <option value=""> Select a name </option>
         % for member in members:
             <option value=${member.memberId}>${member.name}</option>
         % endfor
@@ -35,6 +36,10 @@
     <label for="next_steps">Next Steps?</label>
     <br/>
     <textarea name="next_steps" rows="5" cols="30"></textarea>
+    <br/>
+    <label for-"notes"> Notes: </label>
+    <br/>
+    <textarea name="notes" rows="5" cols="30"></textarea>
     <br/>
     <label for="photo">Photo?</label>
     <br/>

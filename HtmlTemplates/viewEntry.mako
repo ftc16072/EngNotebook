@@ -32,6 +32,7 @@
                         why = []
                         learned = []
                         nextSteps = []
+                        notes = []
                         photos = []
                         for entry in entries:
                             if entries.index(entry) == len(entries) - 1:
@@ -50,7 +51,9 @@
                                 if destination == 'Screen':
                                    photos.append(f"<A HREF='/gotoSmugmug?imgkey={entry.imgKey}'><IMG SRC='{entry.photoLink}' ALT='Photo' /></A>") 
                                 else:
-                                   photos.append(f"<IMG SRC='{entry.photoLink}' ALT='Photo'/>") 
+                                   photos.append(f"<IMG SRC='{entry.photoLink}' ALT='Photo'/>")
+                            if entry.notes:
+                                notes.append(entry.memberName + ": " + entry.notes)
                     %>
             <td><UL>
                <LI>Accomplished
@@ -78,6 +81,12 @@
                         <LI>${step} </LI>
                  %endfor
                </UL></LI>
+               %if notes:
+                <li> Notes: <ul>
+                    %for note in notes:
+                        <li>${note} </li>
+                    %endfor
+               %endif
             </UL>
             </td>
             <td>

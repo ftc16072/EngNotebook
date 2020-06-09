@@ -60,7 +60,7 @@ class FtcNotebook(object):
         return self.template('engNotebookForm.mako', dateString=date, members=memberList, tasks=taskList)
 
     @cherrypy.expose
-    def addEntry(self, dateString, memberId, taskId, accomplished, why, learning, next_steps, photo):
+    def addEntry(self, dateString, memberId, taskId, accomplished, why, learning, next_steps, notes, photo):
         if photo.filename:
             print("******" + dateString[:4])
             imgKey = smugmug.upload_data(photo.filename, photo.file.read(), smugmugConfig, dateString[:4])
@@ -68,7 +68,7 @@ class FtcNotebook(object):
             imgKey = ""
 
         with self.dbConnect()  as connection:
-            self.entries.addEntry(connection, dateString, taskId, memberId, accomplished, why, learning, next_steps, imgKey, smugmugConfig)
+            self.entries.addEntry(connection, dateString, taskId, memberId, accomplished, why, learning, next_steps, notes, imgKey, smugmugConfig)
         
         return self.newEntry()
     

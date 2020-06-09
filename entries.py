@@ -7,12 +7,12 @@ import datetime
 from tasks import Tasks, Task, TaskStages
 from members import Members, Member
 
-SCHEMA_VERSION = 4
+SCHEMA_VERSION = 5
 
 
 
 class Entry():
-    def __init__(self, date, taskName, memberName, accomplished, why, learned, nextSteps, photoLink, imgKey):
+    def __init__(self, date, taskName, memberName, accomplished, why, learned, nextSteps, notes, photoLink, imgKey):
         self.date = date
         self.taskName = taskName
         self.memberName = memberName
@@ -20,6 +20,7 @@ class Entry():
         self.why = why
         self.learned = learned
         self.nextSteps = nextSteps
+        self.notes = notes
         self.photoLink = photoLink
         self.imgKey = imgKey
     
@@ -45,6 +46,7 @@ class Entries():
             accomplished TEXT,
             why TEXT,
             learned TEXT,
+            notes TEXT,
             next_steps TEXT,
             photo_link TEXT,
             imgKey TEXT)""")
@@ -54,13 +56,18 @@ class Entries():
     
 
 
-    def addEntry(self, dbConnection, date, taskId, memberId, accomplished, why, learned, nextSteps, photo, smugmugConfig):
+    def addEntry(self, dbConnection, date, taskId, memberId, accomplished, why, learned, nextSteps, notes, photo, smugmugConfig):
         
-        dbConnection.execute("Insert INTO Entries (date, task_id, member_id, accomplished, why, learned, next_steps, imgKey) VALUES (?,?,?,?,?,?,?,?)", (date, taskId, memberId, accomplished, why, learned, nextSteps, photo))
+        dbConnection.execute("Insert INTO Entries (date, task_id, member_id, accomplished, why, learned, next_steps, notes, imgKey) VALUES (?,?,?,?,?,?,?,?, ?)", (date, taskId, memberId, accomplished, why, learned, nextSteps,notes, photo))
 
     def migrate(self, dbConnection, dbSchemaVersion):
-        if dbSchemaVersion < SCHEMA_VERSION:
+        if dbSchemaVersion < 4:
             dbConnection.execute("ALTER TABLE Entries ADD why TEXT")
+            dbConnection.execute("ALTER TABLE Entries ADD notes TEXT")
+            self.tasks.migrate(dbConnection, dbSchemaVersion)
+            self.members.migrate(dbConnection, dbSchemaVersion)
+        elif dbSchemaVersion < 5:
+            dbConnection.execute("ALTER TABLE Entries ADD notes TEXT")
             self.tasks.migrate(dbConnection, dbSchemaVersion)
             self.members.migrate(dbConnection, dbSchemaVersion)
         elif dbSchemaVersion != SCHEMA_VERSION:
@@ -98,7 +105,7 @@ class Entries():
     def getDateTasksDictionary(self, dateStr, dbConnection, smugmugConfig):
         entryDict = {}
         for row in dbConnection.execute("""
-           SELECT tasks.name, members.name, accomplished, why, learned, next_steps, photo_link, imgkey, Entries.id
+           SELECT tasks.name, members.name, accomplished, why, learned, next_steps, notes, photo_link, imgkey, Entries.id
            FROM Entries
            INNER JOIN tasks
             ON Entries.task_id = Tasks.id
@@ -112,18 +119,19 @@ class Entries():
             why = row[3]
             learned = row[4]
             next_steps = row[5]
-            photoLink = row[6]
-            imgKey = row[7]
-            entriesId = row[8]
+            notes = row[6]
+            photoLink = row[7]
+            imgKey = row[8]
+            entriesId = row[9]
 
             if not(photoLink):
                 if imgKey:
                     photoLink = self.updateSmugmugLink(dbConnection, smugmugConfig, entriesId, imgKey)
-                    newEntry = Entry(dateStr, taskName, memberName, accomplished, why, learned, next_steps, photoLink, imgKey)
+                    newEntry = Entry(dateStr, taskName, memberName, accomplished, why, learned, next_steps, notes, photoLink, imgKey)
                 else:
-                    newEntry = Entry(dateStr, taskName, memberName, accomplished, why, learned, next_steps, photoLink, imgKey)
+                    newEntry = Entry(dateStr, taskName, memberName, accomplished, why, learned, next_steps, notes, photoLink, imgKey)
             else:
-                newEntry = Entry(dateStr, taskName, memberName, accomplished, why, learned, next_steps, photoLink, imgKey)
+                newEntry = Entry(dateStr, taskName, memberName, accomplished, why, learned, next_steps, notes, photoLink, imgKey)
             if not(row[0] in entryDict.keys()):
                 entryDict[row[0]] = [newEntry]
             else:
@@ -135,7 +143,7 @@ class Entries():
         entryDict = {}
         taskName = ""
         for row in dbConnection.execute("""
-           SELECT tasks.name, members.name, accomplished, photo_link, imgkey, Entries.id, date, why
+           SELECT tasks.name, members.name, accomplished, photo_link, imgkey, Entries.id, date, why, notes
            FROM Entries
            INNER JOIN tasks
             ON Entries.task_id = Tasks.id
@@ -147,11 +155,11 @@ class Entries():
             if not(row[3]):
                 if row[4]:
                     photoLink = self.updateSmugmugLink(dbConnection, smugmugConfig, row[5], row[4])
-                    newEntry = Entry(date=row[6], taskName=row[0], memberName=row[1], accomplished=row[2], learned="", nextSteps="", photoLink=photoLink, imgKey=row[4], why=row[7])
+                    newEntry = Entry(date=row[6], taskName=row[0], memberName=row[1], accomplished=row[2], learned="", nextSteps="", photoLink=photoLink, imgKey=row[4], why=row[7], notes=row[8])
                 else:
-                    newEntry = Entry(date=row[6], taskName=row[0], memberName=row[1], accomplished=row[2], learned="", nextSteps="", photoLink="", imgKey=row[4], why=row[7])
+                    newEntry = Entry(date=row[6], taskName=row[0], memberName=row[1], accomplished=row[2], learned="", nextSteps="", photoLink="", imgKey=row[4], why=row[7], notes=row[8])
             else:
-                newEntry = Entry(date=row[6], taskName=row[0], memberName=row[1], accomplished=row[2],learned="", nextSteps="", photoLink=row[3], imgKey=row[4], why=row[7])
+                newEntry = Entry(date=row[6], taskName=row[0], memberName=row[1], accomplished=row[2],learned="", nextSteps="", photoLink=row[3], imgKey=row[4], why=row[7], notes=row[8])
             if not(row[6] in entryDict.keys()):
                 entryDict[row[6]] = [newEntry]
             else:
