@@ -4,32 +4,27 @@ from entries import Entry
 
 class LaTeX():
     def getMonthName(self, monthNumber):
-
         return datetime.date(2020, int(monthNumber), 1).strftime('%B')
-
-
-
 
     def entriesLaTeXFromTasksDict(self, taskDict, date):
         monthName = self.getMonthName(date[5:-3])
         wholedate = monthName + " " + date[-2:]
-        latexString = "\\begin{center} \n"
-        latexString += "   \\subsubsection{date} \n".format(date="{"+wholedate+"}")
-        latexString += "\\begin{tabularx}{\\textwidth}{|l|X|X|} \n"
-        latexString += "\\hline Task & Details & Pictures \\\\ \\hline \n"
-        result = "\n".join(listStrings)
+        latexString = "\\subsubsection {date} \n".format(date="{"+wholedate+"}")
+        latexString += "\\begin{tabular}{|c|c|c|} \n"
+        latexString += "\\hline Task &  Details & Photos \\tabularnewline \n"
+        #result = "\n".join(listStrings);
 
         for task, entries in taskDict.items():
             latexString += task + " & \\begin{itemize}\n"
             for entry in entries:
-                whytext = "\\begin{itemize} \item Why: " + entry.why + " \\end{itemize}" if entry.why else ""
+                whytext = "\\begin{itemize} \\item Why: " + entry.why + " \\end{itemize}" if entry.why else ""
                 accomplishedString = "\\item Accomplished \n \\begin{itemize} \n  \\item " + entry.memberName + ": " + entry.accomplished + "\n" + whytext + "\\end{itemize}"
                 learnedString = "\\item Learned:"
 
 
 
 
-            latexString += "\\\\ \hline \n"
+            latexString += "& \\tabularnewline \\hline \n"
 
         print(latexString)
 
