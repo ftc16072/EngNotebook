@@ -5,6 +5,7 @@
 <%!
     from latex import tex_escape
 %>
+<%page expression_filter="n, tex_escape"/>
 
 \begin{center}
 \subsection{${date}}
@@ -39,7 +40,7 @@ Task&Details&Pictures\\%
                 if entry.accomplished:
                     accomplished.append(entry.memberName + ": " + entry.accomplished)
                     why.append(entry.why)
-                else:
+                elif not entry.photoLink: #Because we can only upload one image at a time, we submit mostly blank entries with only a picture... this is to keep that from showing the name of the person multiple times
                     accomplished.append(entry.memberName)
                     why.append("")
                 if entry.learned:
@@ -47,19 +48,19 @@ Task&Details&Pictures\\%
                 if entry.nextSteps:
                     nextSteps.append(entry.memberName + ": " + entry.nextSteps)
                 if entry.photoLink:
-                    photos.append(f"{entry.photoId}")
+                    photos.append(f"{entry.photoLink}")
         %>
         \begin{itemize} 
             %if accomplished:
                 \item Accomplished \begin{itemize}
                                     %for item in accomplished:
-                                    \item ${item |n, tex_escape}
+                                    \item ${item }
                                     <%
                                     whytext = why[accomplished.index(item)]
                                     %>
                                         %if whytext:
                                             \begin{itemize}
-                                                \item ${whytext |n, tex_escape}
+                                                \item ${whytext }
                                             \end{itemize}
                                         %endif
 
@@ -69,18 +70,22 @@ Task&Details&Pictures\\%
             %if learned:
              \item Learned \begin{itemize}
                                     %for item in learned:
-                                        \item ${item |n, tex_escape}
+                                        \item ${item}
                                     %endfor
                                 \end{itemize}
             %endif
             %if nextSteps:
                  \item Next Steps \begin{itemize}
                                     %for item in nextSteps:
-                                        \item ${item |n, tex_escape}
+                                        \item ${item}
                                     %endfor
                                 \end{itemize}
             %endif
-       \end{itemize} & \\\
+       \end{itemize} & 
+            %for link in photos:
+                \smugmugphoto{${link}}{${link.rsplit('/', 1)[-1]}}
+            %endfor
+        \\\
 %endfor
 
 \end{longtable}%
