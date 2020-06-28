@@ -2,16 +2,11 @@
 
 ##\begin{document}
 
-<%!
-    from latex import tex_escape
-%>
-<%page expression_filter="n, tex_escape"/>
 
 \begin{center}
 \subsection{${date}}
-\end{center}
 
-\begin{longtable}{|p{4 cm}|p{7 cm}|p{5 cm}|}%
+\begin{longtable}{|c{}|c{}|c{}|}%
 \hline%
 Task&Details&Pictures\\%
 \hline%
@@ -60,7 +55,7 @@ Task&Details&Pictures\\%
                                     %>
                                         %if whytext:
                                             \begin{itemize}
-                                                \item ${whytext }
+                                                \item ${whytext}
                                             \end{itemize}
                                         %endif
 
