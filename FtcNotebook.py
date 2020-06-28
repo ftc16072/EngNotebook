@@ -39,6 +39,9 @@ class FtcNotebook(object):
     def template(self, template_name, **kwargs):
         return self.lookup.get_template(template_name).render(**kwargs)
 
+    def LaTeXtemplate(self, template_name, **kwargs):
+        return self.latexLookup.get_template(template_name).render(**kwargs)
+
     def getUser(self):
         username = Cookie('username').get()
         team = Cookie('team').get()
@@ -187,6 +190,28 @@ class FtcNotebook(object):
                              tasksDictionary=tasksDictionary,
                              pageTitle=dateString,
                              destination=destination)
+
+        with self.dbConnect() as connection:
+            tasksDictionary = self.entries.getDateTasksDictionary(dateString, connection, smugmugConfig)
+            (previousEntry, nextEntry) = self.entries.getPrevNext(connection, dateString)
+        if destination == "download":
+            path = "data/entryTex.tex"
+            try:
+                os.remove(path)
+            except IOError:
+                pass #delete File, if it doesn't exist we don't care
+            with open(path, "a") as file:
+                monthName = datetime.date(2020, int(dateString[5:-3]), 1).strftime('%B')
+                wholedate = monthName + " " + dateString[-2:]
+                file.write(self.LaTeXtemplate('viewEntry.mako', date=wholedate, taskDict=tasksDictionary))
+            fullpath = os.path.join(os.path.dirname(__file__), path)
+            print(os.path.dirname(__file__))
+            print(fullpath)
+            return static.serve_file(os.path.abspath(fullpath), 'application/x-download','entryTex', os.path.basename(path))
+
+
+        else:
+            return self.template('viewEntry.mako', previousEntry=previousEntry, nextEntry=nextEntry, tasksDictionary=tasksDictionary, pageTitle=dateString, destination=destination)
 
     @cherrypy.expose
     def viewTask(self, taskId, destination="Screen"):
