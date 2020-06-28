@@ -5,6 +5,7 @@
 <%!
     from latex import tex_escape
 %>
+<%page expression_filter="n, tex_escape"/>
 
 \begin{center}
 \subsection{${date}}
@@ -39,11 +40,7 @@ Task&Details&Pictures\\%
                 if entry.accomplished:
                     accomplished.append(entry.memberName + ": " + entry.accomplished)
                     why.append(entry.why)
-<<<<<<< HEAD
                 elif not entry.photoLink: #Because we can only upload one image at a time, we submit mostly blank entries with only a picture... this is to keep that from showing the name of the person multiple times
-=======
-                else:
->>>>>>> fixed LaTeX generation Problems
                     accomplished.append(entry.memberName)
                     why.append("")
                 if entry.learned:
@@ -57,17 +54,13 @@ Task&Details&Pictures\\%
             %if accomplished:
                 \item Accomplished \begin{itemize}
                                     %for item in accomplished:
-<<<<<<< HEAD
-                                    \item ${item }
-=======
-                                    \item ${item |n, tex_escape}
->>>>>>> fixed LaTeX generation Problems
+                                        \item ${item }
                                     <%
                                     whytext = why[accomplished.index(item)]
                                     %>
                                         %if whytext:
                                             \begin{itemize}
-                                                \item ${whytext |n, tex_escape}
+                                                \item ${whytext }
                                             \end{itemize}
                                         %endif
 
@@ -77,14 +70,14 @@ Task&Details&Pictures\\%
             %if learned:
              \item Learned \begin{itemize}
                                     %for item in learned:
-                                        \item ${item |n, tex_escape}
+                                        \item ${item}
                                     %endfor
                                 \end{itemize}
             %endif
             %if nextSteps:
                  \item Next Steps \begin{itemize}
                                     %for item in nextSteps:
-                                        \item ${item |n, tex_escape}
+                                        \item ${item}
                                     %endfor
                                 \end{itemize}
             %endif
