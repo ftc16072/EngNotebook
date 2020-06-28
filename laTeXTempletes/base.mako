@@ -1,0 +1,9 @@
+\documentclass{article}%
+\usepackage[T1]{fontenc}%
+\usepackage[utf8]{inputenc}%
+\usepackage{lmodern}%
+\usepackage{textcomp}%
+\usepackage{lastpage}%
+\usepackage[tmargin=1cm,lmargin=10cm]{geometry}%
+\usepackage{ragged2e}%
+\usepackage{longtable}%

@@ -3,6 +3,7 @@ import yaml
 import sqlite3
 import json
 import cherrypy
+from cherrypy.lib import static
 from mako.lookup import TemplateLookup
 import datetime
 import glob
@@ -18,6 +19,7 @@ class FtcNotebook(object):
     
     def __init__(self):
         self.lookup = TemplateLookup(directories = ['HtmlTemplates'], default_filters=['h'])
+        self.latexLookup = TemplateLookup(directories = ['laTeXTempletes'], default_filters=['h'])
         self.tasks = Tasks()
         self.members = Members()
         self.entries = Entries()
@@ -34,6 +36,9 @@ class FtcNotebook(object):
 
     def template(self, template_name, **kwargs):
         return self.lookup.get_template(template_name).render(**kwargs)
+    
+    def LaTeXtemplate(self, template_name, **kwargs):
+        return self.latexLookup.get_template(template_name).render(**kwargs)
 
     @cherrypy.expose
     def index(self):
@@ -101,7 +106,24 @@ class FtcNotebook(object):
         with self.dbConnect() as connection:
             tasksDictionary = self.entries.getDateTasksDictionary(dateString, connection, smugmugConfig)
             (previousEntry, nextEntry) = self.entries.getPrevNext(connection, dateString)
-        return self.template('viewEntry.mako', previousEntry=previousEntry, nextEntry=nextEntry, tasksDictionary=tasksDictionary, pageTitle=dateString, destination=destination)    
+        if destination == "download":
+            path = "data/entryTex.tex"
+            try:
+                os.remove(path)
+            except IOError:
+                pass #delete File, if it doesn't exist we don't care
+            with open(path, "a") as file:
+                monthName = datetime.date(2020, int(dateString[5:-3]), 1).strftime('%B')
+                wholedate = monthName + " " + dateString[-2:]
+                file.write(self.LaTeXtemplate('viewEntry.mako', date=wholedate, taskDict=tasksDictionary))
+            fullpath = os.path.join(os.path.dirname(__file__), path)
+            print(os.path.dirname(__file__))
+            print(fullpath)
+            return static.serve_file(os.path.abspath(fullpath), 'application/x-download','entryTex', os.path.basename(path))
+
+            
+        else:
+            return self.template('viewEntry.mako', previousEntry=previousEntry, nextEntry=nextEntry, tasksDictionary=tasksDictionary, pageTitle=dateString, destination=destination)    
 
     @cherrypy.expose
     def viewTask(self, taskId, destination="Screen"):

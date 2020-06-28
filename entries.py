@@ -7,7 +7,7 @@ import datetime
 from tasks import Tasks, Task, TaskStages
 from members import Members, Member
 
-SCHEMA_VERSION = 4
+SCHEMA_VERSION = 5
 
 
 
@@ -27,7 +27,7 @@ class Entry():
         return f"Date: {self.date} Task: {self.taskName} Member: {self.memberName}"
 
     def getPhotoLink(self, config):
-        return smugmug.get_medium_link(self.photo, config)
+        return smugmug.get_medium_link(self.imgKey, config)
         
 class Entries():
     def __init__(self):
@@ -174,12 +174,12 @@ if __name__ == "__main__":
     with sqlite3.connect(DEFAULT_PATH) as connection:
         entries = Entries()
         #entries.createTable(connection)
-        entries.addEntry(connection, datetime.datetime.now(), 2, 1, "Hi", "Saying Hi is fun", "Say Hi to more people", "")
-        entriesDict = entries.getDateTasksDictionary(datetime.datetime.now().strftime("%Y-%m-%d"), connection)
-        for k, v in entriesDict.items():
-            print(k + ":")
-            for entry in v:
-                print("-", entry)
+        #entries.addEntry(connection, datetime.datetime.now(), 2, 1, "Hi", "Saying Hi is fun", "Say Hi to more people", "")
+        #entriesDict = entries.getDateTasksDictionary(datetime.datetime.now().strftime("%Y-%m-%d"), connection)
+        # for k, v in entriesDict.items():
+        #     print(k + ":")
+        #     for entry in v:
+        #         print("-", entry)
         
 
 # if __name__ == "__main__":
