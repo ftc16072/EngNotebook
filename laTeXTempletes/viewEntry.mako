@@ -2,11 +2,15 @@
 
 ##\begin{document}
 
+<%!
+    from latex import tex_escape
+%>
 
 \begin{center}
 \subsection{${date}}
+\end{center}
 
-\begin{longtable}{|c{}|c{}|c{}|}%
+\begin{longtable}{|p{4 cm}|p{7 cm}|p{5 cm}|}%
 \hline%
 Task&Details&Pictures\\%
 \hline%
@@ -19,11 +23,10 @@ Task&Details&Pictures\\%
 \multicolumn{3}{|c|}{Not Continued on Next Page}\\%
 \hline%
 \endlastfoot%
-<% print("**************************") %>
 <% print(taskDict) %>
 % for task, entries in taskDict.items():
-    #
-    % for entry in entries:
+    \hline
+    ${task} & 
         <%
             teamMembers = []
             accomplished = []
@@ -36,6 +39,9 @@ Task&Details&Pictures\\%
                 if entry.accomplished:
                     accomplished.append(entry.memberName + ": " + entry.accomplished)
                     why.append(entry.why)
+                else:
+                    accomplished.append(entry.memberName)
+                    why.append("")
                 if entry.learned:
                     learned.append(entry.memberName + ": " + entry.learned)
                 if entry.nextSteps:
@@ -43,36 +49,38 @@ Task&Details&Pictures\\%
                 if entry.photoLink:
                     photos.append(f"{entry.photoId}")
         %>
-        task & 
         \begin{itemize} 
-            \item Accomplished \begin{itemize}
+            %if accomplished:
+                \item Accomplished \begin{itemize}
                                     %for item in accomplished:
-                                    \item ${item}
+                                    \item ${item |n, tex_escape}
                                     <%
                                     whytext = why[accomplished.index(item)]
                                     %>
                                         %if whytext:
                                             \begin{itemize}
-                                                \item ${whytext}
+                                                \item ${whytext |n, tex_escape}
                                             \end{itemize}
                                         %endif
 
                                     %endfor
                                 \end{itemize}
-            \item learned \begin{itemize}
+            %endif
+            %if learned:
+             \item Learned \begin{itemize}
                                     %for item in learned:
-                                        \item ${item}
+                                        \item ${item |n, tex_escape}
                                     %endfor
                                 \end{itemize}
-            \item nextSteps \begin{itemize}
+            %endif
+            %if nextSteps:
+                 \item Next Steps \begin{itemize}
                                     %for item in nextSteps:
-                                        \item ${item}
+                                        \item ${item |n, tex_escape}
                                     %endfor
                                 \end{itemize}
-        \end{itemize}
-        & photos \\
-    % endfor
+            %endif
+       \end{itemize} & \\\
 %endfor
+
 \end{longtable}%
-\end{center}
-\end{document}
