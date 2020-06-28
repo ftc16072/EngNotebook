@@ -18,6 +18,7 @@
         <br/>
         <input type="radio" name="destination" value="Screen" checked>Screen</input>
         <input type= "radio" name="destination" value="Printer">Printer</input>
+        <input type="radio" name="destination" value="download"> Download Tex</input>
         <br/><input type="submit" value="View Entry"/>
 </form>
 </tr>
