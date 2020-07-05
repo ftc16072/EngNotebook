@@ -20,6 +20,7 @@ def tex_escape(text):
         '\\': r'\textbackslash{}',
         '<': r'\textless{}',
         '>': r'\textgreater{}',
+        '’': r"'",
     }
     regex = re.compile('|'.join(re.escape(str(key)) for key in sorted(conv.keys(), key = lambda item: - len(item))))
     return regex.sub(lambda match: conv[match.group()], text)
