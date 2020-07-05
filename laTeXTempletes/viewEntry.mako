@@ -7,9 +7,7 @@
 %>
 <%page expression_filter="n, tex_escape"/>
 
-\begin{center}
 \subsection{${date}}
-\end{center}
 
 \begin{longtable}{|p{4 cm}|p{7 cm}|p{5 cm}|}%
 \hline%
