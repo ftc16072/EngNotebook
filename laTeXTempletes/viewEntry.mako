@@ -9,23 +9,21 @@
 
 \subsection{${date}}
 
-\begin{longtable}{|p{4 cm}|p{7 cm}|p{5 cm}|}%
-\hline%
-Task&Details&Pictures\\%
+\begin{longtable}{|p{17 cm}|}%
 \hline%
 \endhead%
 \hline%
-\multicolumn{3}{|c|}{Continued on Next Page}\\%
+Continued on Next Page\\%
 \hline%
 \endfoot%
 \hline%
-\multicolumn{3}{|c|}{Not Continued on Next Page}\\%
-\hline%
-\endlastfoot%
+\endlastfoot
+
 <% print(taskDict) %>
 % for task, entries in taskDict.items():
     \hline
-    ${task} & 
+    Task: ${task} \\
+    \hline
         <%
             teamMembers = []
             accomplished = []
@@ -47,10 +45,9 @@ Task&Details&Pictures\\%
                     nextSteps.append(entry.memberName + ": " + entry.nextSteps)
                 if entry.photoLink:
                     photos.append(f"{entry.photoLink}")
-        %>
-        \begin{itemize} 
+        %> 
             %if accomplished:
-                \item Accomplished \begin{itemize}
+                Accomplished: \begin{itemize}
                                     %for item in accomplished:
                                     \item ${item }
                                     <%
@@ -63,27 +60,32 @@ Task&Details&Pictures\\%
                                         %endif
 
                                     %endfor
-                                \end{itemize}
+                                \end{itemize} \\
+                                \hline
             %endif
             %if learned:
-             \item Learned \begin{itemize}
+             Learned: \begin{itemize}
                                     %for item in learned:
                                         \item ${item}
                                     %endfor
-                                \end{itemize}
+                                \end{itemize} \\
+                                \hline
             %endif
             %if nextSteps:
-                 \item Next Steps \begin{itemize}
+                 Next Steps \begin{itemize}
                                     %for item in nextSteps:
                                         \item ${item}
                                     %endfor
-                                \end{itemize}
+                                \end{itemize} \\
+                                \hline
             %endif
-       \end{itemize} & 
-            %for link in photos:
-                \smugmugphoto{${link}}{${link.rsplit('/', 1)[-1]}}
-            %endfor
-        \\\
+            %if photos:
+                Pictures:
+                    %for link in photos:
+                        \smugmugphoto{${link}}{${link.rsplit('/', 1)[-1]}}
+                    %endfor
+            %endif
+        
 %endfor
 
 \end{longtable}%
