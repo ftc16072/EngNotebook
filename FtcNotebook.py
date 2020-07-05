@@ -1,14 +1,15 @@
-import datetime
 import os
+import yaml
 import sqlite3
 import json
 import cherrypy
 from cherrypy.lib import static
-
 from mako.lookup import TemplateLookup
-
-import users
+import datetime
+import glob
+from entries import Entries
 from tasks import Tasks, Task, TaskStages
+from members import Members, Member
 import smugmug
 
 smugmugConfig = {}
@@ -33,12 +34,23 @@ class Cookie(object):
 
 
 class FtcNotebook(object):
+    
     def __init__(self):
-        self.lookup = TemplateLookup(directories=['HtmlTemplates'],
-                                     default_filters=['h'])
+        self.lookup = TemplateLookup(directories = ['HtmlTemplates'], default_filters=['h'])
+        self.latexLookup = TemplateLookup(directories = ['laTeXTempletes'], default_filters=['h'])
+        self.tasks = Tasks()
+        self.members = Members()
+        self.entries = Entries()
+        with self.dbConnect() as connection:
+            if not os.path.exists(DB_STRING):
+                self.entries.createTable(connection)
+            else:
+                data = connection.execute("PRAGMA schema_version").fetchone()
+                if data[0] != self.entries.SCHEMA_VERSION:
+                    self.entries.migrate(connection, data[0])
 
-        self.latexLookup = TemplateLookup(directories=['laTeXTempletes'],
-                                          default_filters=['h'])
+    def dbConnect(self):
+        return sqlite3.connect(DB_STRING, detect_types=sqlite3.PARSE_DECLTYPES)
 
     def template(self, template_name, **kwargs):
         return self.lookup.get_template(template_name).render(**kwargs)
@@ -255,8 +267,35 @@ class FtcNotebook(object):
 
     @cherrypy.expose
     def gotoSmugmug(self, imgkey):
+        smugConfig = json.load(open('secrets.json', 'r'))
+        new_url = smugmug.getLargestImage(imgkey, smugConfig)
+        raise cherrypy.HTTPRedirect(new_url, status=301)
+
+
+    @cherrypy.expose
+    def downloadAll(self):
+        path = "data/entryTex.tex"
+        try:
+            os.remove(path)
+        except IOError:
+            pass #delete File, if it doesn't exist we don't care
+        with open(path, "a") as file:
+            with self.dbConnect() as connection:
+                dateList = self.entries.getDateList(connection)
+                for dateString in dateList:
+                    tasksDictionary = self.entries.getDateTasksDictionary(dateString, connection, smugmugConfig)
+                    monthName = datetime.date(2020, int(dateString[5:-3]), 1).strftime('%B')
+                    wholedate = monthName + " " + dateString[-2:]
+                    file.write(self.LaTeXtemplate('viewEntry.mako', date=wholedate, taskDict=tasksDictionary))
+        fullpath = os.path.join(os.path.dirname(__file__), path)
+        print(os.path.dirname(__file__))
+        print(fullpath)
+        #return static.serve_file(os.path.abspath(fullpath), 'application/x-download','entryTex', os.path.basename(path))
         new_url = smugmug.getLargestImage(imgkey, smugmugConfig)
         raise cherrypy.HTTPRedirect(new_url, status=301)
+
+        return f"written to {fullpath}"
+
 
 
 if __name__ == "__main__":
