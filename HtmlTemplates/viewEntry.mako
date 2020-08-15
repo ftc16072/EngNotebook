@@ -54,6 +54,8 @@
                                    photos.append(f"<IMG SRC='{entry.photoLink}' ALT='Photo'/>")
                             if entry.notes:
                                 notes.append(entry.memberName + ": " + entry.notes)
+                            if entry.latexInput:
+                                notes.append(entry.memberName + ": " + entry.latexInput)
                     %>
             <td><UL>
                <LI>Accomplished

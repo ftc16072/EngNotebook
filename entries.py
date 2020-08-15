@@ -110,7 +110,7 @@ class Entries():
     def getDateTasksDictionary(self, dateStr, dbConnection, smugmugConfig):
         entryDict = {}
         for row in dbConnection.execute("""
-           SELECT tasks.name, members.name, accomplished, why, learned, next_steps, notes, photo_link, imgkey, Entries.id
+           SELECT tasks.name, members.name, accomplished, why, learned, next_steps, notes, photo_link, imgkey, Entries.id, latexInput
            FROM Entries
            INNER JOIN tasks
             ON Entries.task_id = Tasks.id
@@ -128,15 +128,12 @@ class Entries():
             photoLink = row[7]
             imgKey = row[8]
             entriesId = row[9]
+            latexInput = row[10]
 
             if not(photoLink):
                 if imgKey:
                     photoLink = self.updateSmugmugLink(dbConnection, smugmugConfig, entriesId, imgKey)
-                    newEntry = Entry(dateStr, taskName, memberName, accomplished, why, learned, next_steps, notes, photoLink, imgKey)
-                else:
-                    newEntry = Entry(dateStr, taskName, memberName, accomplished, why, learned, next_steps, notes, photoLink, imgKey)
-            else:
-                newEntry = Entry(dateStr, taskName, memberName, accomplished, why, learned, next_steps, notes, photoLink, imgKey)
+            newEntry = Entry(dateStr, taskName, memberName, accomplished, why, learned, next_steps, notes, latexInput, photoLink, imgKey)
             if not(row[0] in entryDict.keys()):
                 entryDict[row[0]] = [newEntry]
             else:
