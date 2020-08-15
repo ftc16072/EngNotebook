@@ -83,3 +83,7 @@ table.Minutes td.header{
     height: auto;
     width: auto;
 }
+
+.mathquill-math-field {
+  width: 100%;
+}

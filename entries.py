@@ -7,12 +7,12 @@ import datetime
 from tasks import Tasks, Task, TaskStages
 from members import Members, Member
 
-SCHEMA_VERSION = 5
+SCHEMA_VERSION = 6
 
 
 
 class Entry():
-    def __init__(self, date, taskName, memberName, accomplished, why, learned, nextSteps, notes, photoLink, imgKey):
+    def __init__(self, date, taskName, memberName, accomplished, why, learned, nextSteps, notes, latexInput, photoLink, imgKey):
         self.date = date
         self.taskName = taskName
         self.memberName = memberName
@@ -21,6 +21,7 @@ class Entry():
         self.learned = learned
         self.nextSteps = nextSteps
         self.notes = notes
+        self.latexInput = latexInput
         self.photoLink = photoLink
         self.imgKey = imgKey
     
@@ -47,31 +48,35 @@ class Entries():
             why TEXT,
             learned TEXT,
             notes TEXT,
+            latexInput TEXT,
             next_steps TEXT,
             photo_link TEXT,
             imgKey TEXT)""")
+        self.tasks.createTable(dbConnection)
+        self.members.createTable(dbConnection)
 
         dbConnection.execute(
                 'PRAGMA schema_version = ' + str(SCHEMA_VERSION))
     
 
 
-    def addEntry(self, dbConnection, date, taskId, memberId, accomplished, why, learned, nextSteps, notes, photo, smugmugConfig):
+    def addEntry(self, dbConnection, date, taskId, memberId, accomplished, why, learned, nextSteps, notes, latexInput, photo, smugmugConfig):
         
-        dbConnection.execute("Insert INTO Entries (date, task_id, member_id, accomplished, why, learned, next_steps, notes, imgKey) VALUES (?,?,?,?,?,?,?,?, ?)", (date, taskId, memberId, accomplished, why, learned, nextSteps,notes, photo))
+        dbConnection.execute("Insert INTO Entries (date, task_id, member_id, accomplished, why, learned, next_steps, notes, latexInput, imgKey) VALUES (?,?,?,?,?,?,?,?,?, ?)", (date, taskId, memberId, accomplished, why, learned, nextSteps,notes, latexInput, photo))
 
     def migrate(self, dbConnection, dbSchemaVersion):
+        print(f'Schema: {dbSchemaVersion}')
         if dbSchemaVersion < 4:
             dbConnection.execute("ALTER TABLE Entries ADD why TEXT")
+        if dbSchemaVersion < 5:
             dbConnection.execute("ALTER TABLE Entries ADD notes TEXT")
-            self.tasks.migrate(dbConnection, dbSchemaVersion)
-            self.members.migrate(dbConnection, dbSchemaVersion)
-        elif dbSchemaVersion < 5:
-            dbConnection.execute("ALTER TABLE Entries ADD notes TEXT")
-            self.tasks.migrate(dbConnection, dbSchemaVersion)
-            self.members.migrate(dbConnection, dbSchemaVersion)
-        elif dbSchemaVersion != SCHEMA_VERSION:
+        if dbSchemaVersion < 6:
+            dbConnection.execute("ALTER TABLE Entries ADD latexInput TEXT")
+        if dbSchemaVersion > SCHEMA_VERSION:
             raise Exception("Unknown DB schema version" + str(dbSchemaVersion))
+        self.tasks.migrate(dbConnection, dbSchemaVersion)
+        self.members.migrate(dbConnection, dbSchemaVersion)
+
 
     def getDateList(self, dbConnection):
         dateList = []

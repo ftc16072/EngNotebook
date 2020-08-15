@@ -1,5 +1,10 @@
 <%def name="title()">Entry Form-ftc16072</%def>
-<%def name="head()"></%def>
+<%def name="head()">
+<link rel="stylesheet" type="text/css"
+  href="/static/mathquill.css" />
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<script src="/static/mathquill.js"></script>
+</%def>
 <%inherit file = "base.mako"/>
 <a href="index">Back<a>
 <form action="addEntry" method="post" enctype="multipart/form-data">
@@ -41,6 +46,9 @@
     <br/>
     <textarea name="notes" rows="5" cols="30"></textarea>
     <br/>
+    <p>Type math here: <span id="equations" class="mathquill-math-field"></span></p>
+    <input type="hidden" id="latexInput" name="latexInput" value=""/> 
+    <br/>
     <label for="photo">Photo?</label>
     <br/>
     <input name="photo" type="file" accept="image/*"/>
@@ -48,3 +56,17 @@
     <input type="submit" value="Submit">
 
 </form>
+<script type="text/javascript">
+  var MQ = MathQuill.getInterface(MathQuill.getInterface.MAX);
+  var equationSpan = document.getElementById('equations');
+  var latexInput = document.getElementById('latexInput');
+
+  var equationMathField = MQ.MathField(equationSpan, {
+    handlers: {
+      edit: function() {
+        latexInput.value = equationMathField.latex(); 
+      }
+    }
+  });
+  equationMathField.latex(latexInput.value)
+</script>
