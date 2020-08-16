@@ -25,7 +25,7 @@ class FtcNotebook(object):
         self.entries = Entries()
 
         if not os.path.exists(DB_STRING):
-            with self.dbConnect as connection:
+            with self.dbConnect() as connection:
                 self.entries.createTable(connection)
 
         with self.dbConnect() as connection:
