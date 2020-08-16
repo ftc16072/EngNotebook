@@ -1,134 +1,72 @@
 import os
-import yaml
 import sqlite3
 import json
 import cherrypy
+
 from mako.lookup import TemplateLookup
-import datetime
-import glob
-from entries import Entries
-from tasks import Tasks, Task, TaskStages
-from members import Members, Member
-import smugmug
+
+import users
 
 smugmugConfig = {}
-DB_STRING = os.path.join(os.path.dirname(__file__), 'data/database.sqlite3')
+
+
+class Cookie(object):
+    """Abstracts cookies so they can be in sessions"""
+    def __init__(self, name):
+        self.name = name
+
+    def get(self, default=''):
+        """Get the value of the cookie or set if doesn't exist"""
+        if self.name in cherrypy.session:
+            return cherrypy.session[self.name]
+        else:
+            self.set(default)
+            return default
+
+    def set(self, value):
+        """Set the value of the cookie"""
+        cherrypy.session[self.name] = value
 
 
 class FtcNotebook(object):
-
     def __init__(self):
-        self.lookup = TemplateLookup(
-            directories=['HtmlTemplates'], default_filters=['h'])
-        self.tasks = Tasks()
-        self.members = Members()
-        self.entries = Entries()
-
-        if not os.path.exists(DB_STRING):
-            with self.dbConnect() as connection:
-                self.entries.createTable(connection)
-
-        with self.dbConnect() as connection:
-            data = connection.execute("PRAGMA schema_version").fetchone()
-            if data[0] != self.entries.SCHEMA_VERSION:
-                self.entries.migrate(connection, data[0])
-
-    def dbConnect(self):
-        return sqlite3.connect(DB_STRING, detect_types=sqlite3.PARSE_DECLTYPES)
+        self.lookup = TemplateLookup(directories=['HtmlTemplates'],
+                                     default_filters=['h'])
 
     def template(self, template_name, **kwargs):
         return self.lookup.get_template(template_name).render(**kwargs)
 
+    def getUser(self):
+        username = Cookie('username').get()
+        team = Cookie('team').get()
+        if not username or not team:
+            return None
+        return users.User(username, team)
+
+    def show_loginpage(self, error=''):
+        """Clear session and show login page"""
+        cherrypy.session.regenerate()
+        return self.template("login.mako", error=error)
+
+    def show_mainpage(self, user, error=''):
+        return f'{user.username} on {user.team}'
+
     @cherrypy.expose
     def index(self):
-        with self.dbConnect() as connection:
-            dateList = self.entries.getDateList(connection)
-            taskList = self.tasks.getAllTaskList(connection)
-
-        return self.template('home.mako', dateList=dateList, taskList=taskList, destination="Screen")
-
-    @cherrypy.expose
-    def listEntries(self):
-        with self.dbConnect() as connection:
-            dateList = self.entries.getDateList(connection)
-
-        return self.template('entries.mako', dateList=dateList)
+        """Shows main page or forces login if not logged in"""
+        user = self.getUser()
+        if not user:
+            return self.show_loginpage('')
+        return self.show_mainpage(user)
 
     @cherrypy.expose
-    def newEntry(self):
-        now = datetime.datetime.now()
-        date = now.strftime("%Y-%m-%d")
-        with self.dbConnect() as connection:
-            memberList = self.members.getMembers(connection)
-            taskList = self.tasks.getWorkingTaskList(connection)
-        return self.template('engNotebookForm.mako', dateString=date, members=memberList, tasks=taskList)
-
-    @cherrypy.expose
-    def addEntry(self, dateString, memberId, taskId, accomplished, why, learning, next_steps, notes, photo):
-        if photo.filename:
-            print("******" + dateString[:4])
-            imgKey = smugmug.upload_data(
-                photo.filename, photo.file.read(), smugmugConfig, dateString[:4])
-        else:
-            imgKey = ""
-
-        with self.dbConnect() as connection:
-            self.entries.addEntry(connection, dateString, taskId, memberId,
-                                  accomplished, why, learning, next_steps, notes, imgKey, smugmugConfig)
-
-        return self.newEntry()
-
-    @cherrypy.expose
-    def tasksForm(self):
-        taskStages = TaskStages
-        with self.dbConnect() as connection:
-            taskList = self.tasks.getAllTaskList(connection)
-        return self.template('tasksForm.mako', taskList=taskList, TaskStages=taskStages)
-
-    @cherrypy.expose
-    def updateTasks(self, **kwargs):
-        taskdict = dict(**kwargs)
-        with self.dbConnect() as connection:
-            for (k, v) in taskdict.items():
-                self.tasks.changeState(connection, taskId=k, newState=v)
-        return self.tasksForm()
-
-    @cherrypy.expose
-    def addTasks(self, task, stage):
-        with self.dbConnect() as connection:
-            self.tasks.addTask(dbConnection=connection, name=task, stage=stage)
-        return self.tasksForm()
-
-    @cherrypy.expose
-    def viewEntry(self, dateString, destination):
-        previousEntry = ''
-        nextEntry = ''
-
-        with self.dbConnect() as connection:
-            tasksDictionary = self.entries.getDateTasksDictionary(
-                dateString, connection, smugmugConfig)
-            (previousEntry, nextEntry) = self.entries.getPrevNext(
-                connection, dateString)
-        return self.template('viewEntry.mako', previousEntry=previousEntry, nextEntry=nextEntry, tasksDictionary=tasksDictionary, pageTitle=dateString, destination=destination)
-
-    @cherrypy.expose
-    def viewTask(self, taskId, destination="Screen"):
-        with self.dbConnect() as connection:
-            (dateDictionary, taskName) = self.entries.getDateDictionary(
-                taskId, connection, smugmugConfig)
-        return self.template('viewTask.mako', dateDictionary=dateDictionary, pageTitle=taskName, destination=destination)
-
-    @cherrypy.expose
-    def viewTaskByName(self, taskName, destination="Screen"):
-        with self.dbConnect() as connection:
-            taskId = self.tasks.getTaskId(connection, taskName)
-        return self.viewTask(taskId, destination)
-
-    @cherrypy.expose
-    def gotoSmugmug(self, imgkey):
-        smugConfig = json.load(open('secrets.json', 'r'))
-        new_url = smugmug.getLargestImage(imgkey, smugConfig)
-        raise cherrypy.HTTPRedirect(new_url, status=301)
+    def login(self, username, password):
+        user = users.Users().getUser(username, password)
+        if user:
+            Cookie('username').set(user.username)
+            Cookie('team').set(user.team)
+            return self.show_mainpage(user)
+        return self.show_loginpage('Not a valid username/password pair')
 
 
 if __name__ == "__main__":
