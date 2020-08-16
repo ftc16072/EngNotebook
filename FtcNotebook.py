@@ -14,20 +14,24 @@ import smugmug
 smugmugConfig = {}
 DB_STRING = os.path.join(os.path.dirname(__file__), 'data/database.sqlite3')
 
+
 class FtcNotebook(object):
-    
+
     def __init__(self):
-        self.lookup = TemplateLookup(directories = ['HtmlTemplates'], default_filters=['h'])
+        self.lookup = TemplateLookup(
+            directories=['HtmlTemplates'], default_filters=['h'])
         self.tasks = Tasks()
         self.members = Members()
         self.entries = Entries()
-        with self.dbConnect() as connection:
-            if not os.path.exists(DB_STRING):
+
+        if not os.path.exists(DB_STRING):
+            with self.dbConnect as connection:
                 self.entries.createTable(connection)
-            else:
-                data = connection.execute("PRAGMA schema_version").fetchone()
-                if data[0] != self.entries.SCHEMA_VERSION:
-                    self.entries.migrate(connection, data[0])
+
+        with self.dbConnect() as connection:
+            data = connection.execute("PRAGMA schema_version").fetchone()
+            if data[0] != self.entries.SCHEMA_VERSION:
+                self.entries.migrate(connection, data[0])
 
     def dbConnect(self):
         return sqlite3.connect(DB_STRING, detect_types=sqlite3.PARSE_DECLTYPES)
@@ -37,24 +41,24 @@ class FtcNotebook(object):
 
     @cherrypy.expose
     def index(self):
-        with self.dbConnect()  as connection:
+        with self.dbConnect() as connection:
             dateList = self.entries.getDateList(connection)
             taskList = self.tasks.getAllTaskList(connection)
-        
-        return self.template('home.mako', dateList=dateList,taskList=taskList,destination="Screen")
-   
+
+        return self.template('home.mako', dateList=dateList, taskList=taskList, destination="Screen")
+
     @cherrypy.expose
     def listEntries(self):
-        with self.dbConnect()  as connection:
+        with self.dbConnect() as connection:
             dateList = self.entries.getDateList(connection)
-        
+
         return self.template('entries.mako', dateList=dateList)
 
     @cherrypy.expose
     def newEntry(self):
         now = datetime.datetime.now()
         date = now.strftime("%Y-%m-%d")
-        with self.dbConnect()  as connection:
+        with self.dbConnect() as connection:
             memberList = self.members.getMembers(connection)
             taskList = self.tasks.getWorkingTaskList(connection)
         return self.template('engNotebookForm.mako', dateString=date, members=memberList, tasks=taskList)
@@ -63,66 +67,70 @@ class FtcNotebook(object):
     def addEntry(self, dateString, memberId, taskId, accomplished, why, learning, next_steps, notes, photo):
         if photo.filename:
             print("******" + dateString[:4])
-            imgKey = smugmug.upload_data(photo.filename, photo.file.read(), smugmugConfig, dateString[:4])
+            imgKey = smugmug.upload_data(
+                photo.filename, photo.file.read(), smugmugConfig, dateString[:4])
         else:
             imgKey = ""
 
-        with self.dbConnect()  as connection:
-            self.entries.addEntry(connection, dateString, taskId, memberId, accomplished, why, learning, next_steps, notes, imgKey, smugmugConfig)
-        
+        with self.dbConnect() as connection:
+            self.entries.addEntry(connection, dateString, taskId, memberId,
+                                  accomplished, why, learning, next_steps, notes, imgKey, smugmugConfig)
+
         return self.newEntry()
-    
+
     @cherrypy.expose
     def tasksForm(self):
         taskStages = TaskStages
-        with self.dbConnect()  as connection:
+        with self.dbConnect() as connection:
             taskList = self.tasks.getAllTaskList(connection)
         return self.template('tasksForm.mako', taskList=taskList, TaskStages=taskStages)
 
     @cherrypy.expose
     def updateTasks(self, **kwargs):
-        taskdict = dict(**kwargs) 
-        with self.dbConnect()  as connection:
+        taskdict = dict(**kwargs)
+        with self.dbConnect() as connection:
             for (k, v) in taskdict.items():
                 self.tasks.changeState(connection, taskId=k, newState=v)
         return self.tasksForm()
 
     @cherrypy.expose
     def addTasks(self, task, stage):
-        with self.dbConnect()  as connection:
-            self.tasks.addTask(dbConnection=connection,name=task, stage=stage)
+        with self.dbConnect() as connection:
+            self.tasks.addTask(dbConnection=connection, name=task, stage=stage)
         return self.tasksForm()
 
     @cherrypy.expose
     def viewEntry(self, dateString, destination):
         previousEntry = ''
         nextEntry = ''
-        
+
         with self.dbConnect() as connection:
-            tasksDictionary = self.entries.getDateTasksDictionary(dateString, connection, smugmugConfig)
-            (previousEntry, nextEntry) = self.entries.getPrevNext(connection, dateString)
-        return self.template('viewEntry.mako', previousEntry=previousEntry, nextEntry=nextEntry, tasksDictionary=tasksDictionary, pageTitle=dateString, destination=destination)    
+            tasksDictionary = self.entries.getDateTasksDictionary(
+                dateString, connection, smugmugConfig)
+            (previousEntry, nextEntry) = self.entries.getPrevNext(
+                connection, dateString)
+        return self.template('viewEntry.mako', previousEntry=previousEntry, nextEntry=nextEntry, tasksDictionary=tasksDictionary, pageTitle=dateString, destination=destination)
 
     @cherrypy.expose
     def viewTask(self, taskId, destination="Screen"):
         with self.dbConnect() as connection:
-            (dateDictionary, taskName) = self.entries.getDateDictionary(taskId, connection, smugmugConfig)
+            (dateDictionary, taskName) = self.entries.getDateDictionary(
+                taskId, connection, smugmugConfig)
         return self.template('viewTask.mako', dateDictionary=dateDictionary, pageTitle=taskName, destination=destination)
-    
+
     @cherrypy.expose
     def viewTaskByName(self, taskName, destination="Screen"):
         with self.dbConnect() as connection:
             taskId = self.tasks.getTaskId(connection, taskName)
         return self.viewTask(taskId, destination)
-    
+
     @cherrypy.expose
     def gotoSmugmug(self, imgkey):
         smugConfig = json.load(open('secrets.json', 'r'))
         new_url = smugmug.getLargestImage(imgkey, smugConfig)
-        raise cherrypy.HTTPRedirect(new_url, status=301) 
+        raise cherrypy.HTTPRedirect(new_url, status=301)
 
 
 if __name__ == "__main__":
     smugmugConfig = json.load(open('secrets.json', 'r'))
     cherrypy.quickstart(FtcNotebook(), config='development.conf')
-   
