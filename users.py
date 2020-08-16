@@ -1,24 +1,15 @@
 import hashlib
-import sqlite3
-import re
 import os
 import json
 from passlib.apps import custom_app_context as pwd_context
 
-
-def make_safe_name(input):
-    return re.sub(r'\W+', '', input)
+import team
 
 
 class User(object):
-    def __init__(self, username, team):
+    def __init__(self, username, teamName):
         self.username = username
-        self.team = team
-        self.databaseName = 'data/' + make_safe_name(self.team) + '.sqlite3'
-
-    def dbConnect(self):
-        return sqlite3.connect(self.databaseName,
-                               detect_types=sqlite3.PARSE_DECLTYPES)
+        self.team = team.teams.getTeam(teamName)
 
 
 class Users(object):
@@ -67,7 +58,7 @@ if __name__ == "__main__":
     user = users.getUser('alan@randomsmiths.com', 'password')
     if not user:
         print('Failure verifying good one')
-    print(f'Success: {user.databaseName}')
+    print(f'Success: {user.teams.databaseName}')
 
     # Check bad password
     user = users.getUser('alan@randomsmiths.com', 'badpass')
