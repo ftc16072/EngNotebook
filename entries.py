@@ -10,7 +10,6 @@ from members import Members, Member
 SCHEMA_VERSION = 5
 
 
-
 class Entry():
     def __init__(self, date, taskName, memberName, accomplished, why, learned, nextSteps, notes, photoLink, imgKey):
         self.date = date
@@ -23,13 +22,14 @@ class Entry():
         self.notes = notes
         self.photoLink = photoLink
         self.imgKey = imgKey
-    
+
     def __str__(self):
         return f"Date: {self.date} Task: {self.taskName} Member: {self.memberName}"
 
     def getPhotoLink(self, config):
         return smugmug.get_medium_link(self.imgKey, config)
-        
+
+
 class Entries():
     def __init__(self):
         self.tasks = Tasks()
@@ -50,28 +50,27 @@ class Entries():
             next_steps TEXT,
             photo_link TEXT,
             imgKey TEXT)""")
+        self.tasks.createTable(dbConnection)
+        self.members.createTable(dbConnection)
 
         dbConnection.execute(
-                'PRAGMA schema_version = ' + str(SCHEMA_VERSION))
-    
-
+            'PRAGMA schema_version = ' + str(SCHEMA_VERSION))
 
     def addEntry(self, dbConnection, date, taskId, memberId, accomplished, why, learned, nextSteps, notes, photo, smugmugConfig):
-        
-        dbConnection.execute("Insert INTO Entries (date, task_id, member_id, accomplished, why, learned, next_steps, notes, imgKey) VALUES (?,?,?,?,?,?,?,?, ?)", (date, taskId, memberId, accomplished, why, learned, nextSteps,notes, photo))
+
+        dbConnection.execute("Insert INTO Entries (date, task_id, member_id, accomplished, why, learned, next_steps, notes, imgKey) VALUES (?,?,?,?,?,?,?,?, ?)",
+                             (date, taskId, memberId, accomplished, why, learned, nextSteps, notes, photo))
 
     def migrate(self, dbConnection, dbSchemaVersion):
+        if dbSchemaVersion > SCHEMA_VERSION:
+            raise Exception("Unknown DB schema version" + str(dbSchemaVersion))
         if dbSchemaVersion < 4:
             dbConnection.execute("ALTER TABLE Entries ADD why TEXT")
+        if dbSchemaVersion < 5:
             dbConnection.execute("ALTER TABLE Entries ADD notes TEXT")
-            self.tasks.migrate(dbConnection, dbSchemaVersion)
-            self.members.migrate(dbConnection, dbSchemaVersion)
-        elif dbSchemaVersion < 5:
-            dbConnection.execute("ALTER TABLE Entries ADD notes TEXT")
-            self.tasks.migrate(dbConnection, dbSchemaVersion)
-            self.members.migrate(dbConnection, dbSchemaVersion)
-        elif dbSchemaVersion != SCHEMA_VERSION:
-            raise Exception("Unknown DB schema version" + str(dbSchemaVersion))
+
+        self.tasks.migrate(dbConnection, dbSchemaVersion)
+        self.members.migrate(dbConnection, dbSchemaVersion)
 
     def getDateList(self, dbConnection):
         dateList = []
@@ -112,7 +111,7 @@ class Entries():
            INNER JOIN members
             ON Entries.member_id = Members.id
            WHERE (date = ?)       
-            """,(dateStr,)):
+            """, (dateStr,)):
             taskName = row[0]
             memberName = row[1]
             accomplished = row[2]
@@ -126,19 +125,23 @@ class Entries():
 
             if not(photoLink):
                 if imgKey:
-                    photoLink = self.updateSmugmugLink(dbConnection, smugmugConfig, entriesId, imgKey)
-                    newEntry = Entry(dateStr, taskName, memberName, accomplished, why, learned, next_steps, notes, photoLink, imgKey)
+                    photoLink = self.updateSmugmugLink(
+                        dbConnection, smugmugConfig, entriesId, imgKey)
+                    newEntry = Entry(dateStr, taskName, memberName, accomplished,
+                                     why, learned, next_steps, notes, photoLink, imgKey)
                 else:
-                    newEntry = Entry(dateStr, taskName, memberName, accomplished, why, learned, next_steps, notes, photoLink, imgKey)
+                    newEntry = Entry(dateStr, taskName, memberName, accomplished,
+                                     why, learned, next_steps, notes, photoLink, imgKey)
             else:
-                newEntry = Entry(dateStr, taskName, memberName, accomplished, why, learned, next_steps, notes, photoLink, imgKey)
+                newEntry = Entry(dateStr, taskName, memberName, accomplished,
+                                 why, learned, next_steps, notes, photoLink, imgKey)
             if not(row[0] in entryDict.keys()):
                 entryDict[row[0]] = [newEntry]
             else:
                 entryDict[row[0]].append(newEntry)
 
         return entryDict
-        
+
     def getDateDictionary(self, taskId, dbConnection, smugmugConfig):
         entryDict = {}
         taskName = ""
@@ -150,16 +153,20 @@ class Entries():
            INNER JOIN members
             ON Entries.member_id = Members.id
            WHERE (Tasks.id = ?) ORDER BY date ASC
-            """,(taskId,)):
+            """, (taskId,)):
             taskName = row[0]
             if not(row[3]):
                 if row[4]:
-                    photoLink = self.updateSmugmugLink(dbConnection, smugmugConfig, row[5], row[4])
-                    newEntry = Entry(date=row[6], taskName=row[0], memberName=row[1], accomplished=row[2], learned="", nextSteps="", photoLink=photoLink, imgKey=row[4], why=row[7], notes=row[8])
+                    photoLink = self.updateSmugmugLink(
+                        dbConnection, smugmugConfig, row[5], row[4])
+                    newEntry = Entry(date=row[6], taskName=row[0], memberName=row[1], accomplished=row[2],
+                                     learned="", nextSteps="", photoLink=photoLink, imgKey=row[4], why=row[7], notes=row[8])
                 else:
-                    newEntry = Entry(date=row[6], taskName=row[0], memberName=row[1], accomplished=row[2], learned="", nextSteps="", photoLink="", imgKey=row[4], why=row[7], notes=row[8])
+                    newEntry = Entry(date=row[6], taskName=row[0], memberName=row[1], accomplished=row[2],
+                                     learned="", nextSteps="", photoLink="", imgKey=row[4], why=row[7], notes=row[8])
             else:
-                newEntry = Entry(date=row[6], taskName=row[0], memberName=row[1], accomplished=row[2],learned="", nextSteps="", photoLink=row[3], imgKey=row[4], why=row[7], notes=row[8])
+                newEntry = Entry(date=row[6], taskName=row[0], memberName=row[1], accomplished=row[2],
+                                 learned="", nextSteps="", photoLink=row[3], imgKey=row[4], why=row[7], notes=row[8])
             if not(row[6] in entryDict.keys()):
                 entryDict[row[6]] = [newEntry]
             else:
@@ -167,14 +174,11 @@ class Entries():
 
         return (entryDict, taskName)
 
-    
-    
-
-
 
 if __name__ == "__main__":
-    DEFAULT_PATH = os.path.join(os.path.dirname(__file__), 'data/testDatabase.sqlite3')
-    
+    DEFAULT_PATH = os.path.join(os.path.dirname(
+        __file__), 'data/testDatabase.sqlite3')
+
     # try:
     #     os.remove(DEFAULT_PATH)
     # except IOError:
