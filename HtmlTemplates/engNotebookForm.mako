@@ -1,5 +1,9 @@
 <%def name="title()">Entry Form-ftc16072</%def>
-<%def name="head()"></%def>
+<%def name="head()">
+<script src="https://d3js.org/d3.v5.min.js"></script>
+<script src="https://unpkg.com/@hpcc-js/wasm@0.3.11/dist/index.min.js"></script>
+<script src="https://unpkg.com/d3-graphviz@3.0.5/build/d3-graphviz.js"></script>
+</%def>
 <%inherit file = "base.mako"/>
 <a href="index">Back<a>
 <form action="addEntry" method="post" enctype="multipart/form-data">
@@ -39,12 +43,24 @@
     <br/>
     <label for-"notes"> Notes: </label>
     <br/>
-    <textarea name="notes" rows="5" cols="30"></textarea>
+    <textarea name="notes" class="optional" rows="5" cols="30"></textarea>
+    <br/>
+    <label for="diagramDot">Diagram (using Dot):<a href="https://graphs.grevian.org/example" target="_blank">Examples</a></label>
+    <br/>
+    <div>
+    <textarea name="diagramDot" id="dotInput" class="optional" rows="8" cols="30" style="display:inline-block;vertical-align:middle;"></textarea>
+    <span id="graph" style="display:inline-block;vertical-align:middle;"></span>
+    </div>
     <br/>
     <label for="photo">Photo?</label>
     <br/>
     <input name="photo" type="file" accept="image/*"/>
-    <br/><br/>
+    <br/>
     <input type="submit" value="Submit">
 
 </form>
+<script type="text/javascript">
+    dotInput = document.getElementById('dotInput')
+    dotInput.oninput = function(){
+        d3.select("#graph").graphviz().renderDot(dotInput.value)};
+</script>

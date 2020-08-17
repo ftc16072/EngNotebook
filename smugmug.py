@@ -16,15 +16,15 @@ headers = {
 }
 
 
-
 def upload_data(filename, img_data, config, year):
+    ## TODO: Add AlbumURIs to database
     if year == 2019:
         headers['X-Smug-AlbumURI'] = '/api/v2/album/VgQcSw'
     elif year == 2020:
         headers['X-Smug-AlbumURI'] = '/api/v2/album/2z78cj'
     else:
         headers['X-Smug-AlbumURI'] = '/api/v2/album/2z78cj'
-        
+
     session = OAuth1Session(consumer_key=config['app_key'],
                             consumer_secret=config['app_secret'],
                             access_token=config['user_token'],
@@ -44,11 +44,10 @@ def upload_data(filename, img_data, config, year):
 
     return imgKey
 
+
 def upload_file(filename, config, year):
     img_data = open(filename, 'rb').read()
     return upload_data(filename, img_data, year)
-
-  
 
 
 base_api = 'https://www.smugmug.com/api/v2/image/'
@@ -62,9 +61,10 @@ def get_medium_link(imgKey, config):
                      params=params)
     try:
         link = r.json()['Response']['ImageSizes']['MediumImageUrl']
-    except KeyError:   # In case it was a tiny image and there wasn't anything stored for medium
+    except KeyError:  # In case it was a tiny image and there wasn't anything stored for medium
         link = r.json()['Response']['ImageSizes']['LargestImageUrl']
     return link
+
 
 def getLargestImage(imgKey, config):
     headers = {'Accept': 'application/json'}
@@ -73,6 +73,7 @@ def getLargestImage(imgKey, config):
                      headers=headers,
                      params=params)
     return r.json()['Response']['ImageSizes']['LargestImageUrl']
+
 
 if __name__ == "main":
     config = json.load(open('secrets.json', 'r'))

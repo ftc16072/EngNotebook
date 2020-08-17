@@ -1,5 +1,9 @@
 <%def name="title()">FTC16072 - ${pageTitle}</%def>
-<%def name="head()"></%def>
+<%def name="head()">
+<script src="https://d3js.org/d3.v5.min.js"></script>
+<script src="https://unpkg.com/@hpcc-js/wasm@0.3.11/dist/index.min.js"></script>
+<script src="https://unpkg.com/d3-graphviz@3.0.5/build/d3-graphviz.js"></script>
+</%def>
 <%inherit file = "base.mako"/>
 % if destination == "Screen":
     <a href="/"><button>Home</button></a>
@@ -10,33 +14,34 @@
             <th class="date">Date</th>
             <th class="accomplished">Accomplished</th>
             <th class="picture">Picture(s)</th>
+            <th class="notes">Notes and Diagrams</th>
         </tr>
-        
+        `
         % for date, entries in dateDictionary.items():
             <tr>
-             % if destination == "Screen":
+            % if destination == "Screen":
                        <td class="header"><a href='/viewEntry?dateString=${date}&destination=Screen'>${date}</a></td>
-                    % else:
+            % else:
                        <td class="header">${date}</td>
-                    % endif
-                    <%
-                        teamMembers = []
-                        accomplished = []
-                        photos = []
-                        for entry in entries:
-                            if entries.index(entry) == len(entries) - 1:
-                                comma = " "
-                            else:
-                                comma = " "
-                            teamMembers.append(entry.memberName + comma)
-                            if entry.accomplished:
-                                accomplished.append(entry.memberName + ": " + entry.accomplished + comma)
-                            if entry.photoLink:
-                                if destination == 'Screen':
-                                   photos.append(f"<A HREF='/gotoSmugmug?imgkey={entry.imgKey}'><IMG SRC='{entry.photoLink}' ALT='Photo' /></A>") 
-                                else:
-                                   photos.append(f"<IMG SRC='{entry.photoLink}' ALT='Photo'/>") 
-                    %>
+            % endif
+            <%
+                accomplished = []
+                photos = []
+                notes = []
+                diagrams = []
+                for entry in entries:
+                    if entry.accomplished:
+                        accomplished.append(f"{entry.memberName} : {entry.accomplished}")
+                    if entry.photoLink:
+                        if destination == 'Screen':
+                            photos.append(f"<A HREF='/gotoSmugmug?imgkey={entry.imgKey}'><IMG SRC='{entry.photoLink}' ALT='Photo' /></A>") 
+                        else:
+                            photos.append(f"<IMG SRC='{entry.photoLink}' ALT='Photo'/>") 
+                    if entry.notes:
+                        notes.append(f"{entry.memberName} : {entry.notes}")
+                    if entry.diagramDot:
+                        diagrams.append(entry.diagramDot)
+            %>
             <td>
                <UL>
                  %for item in accomplished:
@@ -50,6 +55,23 @@
                 ${photo | n}
                 </span>
             %endfor
+            </td>
+            <td>
+            %if notes:
+                <UL>
+                %for note in notes:
+                   <LI>${note}</LI>
+                %endfor
+                </UL>
+            %endif
+            %if diagrams:
+               %for diagram in diagrams:
+               <div class="diagram" id="diagram-${loop.index}"></div>
+               <script type="text/javascript">
+                    d3.select("#diagram-${loop.index}").graphviz().renderDot("${"".join(diagram.split())|n}");
+               </script>
+               %endfor
+            %endif
             </td>
             </tr>
         % endfor

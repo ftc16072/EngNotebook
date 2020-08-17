@@ -47,9 +47,14 @@ table.Minutes th.details{
 table.Minutes th.picture{
     width: 40%;
 }
-
+table.Minutes th.date{
+    width: 10%;
+}
 table.Minutes th.accomplished{
-    width: 50%
+    width: 30%
+}
+table.Minutes th.notes{
+    width: 30%
 }
 
 table.Minutes table.details{
@@ -69,6 +74,9 @@ table.Minutes td.header{
     max-width: 1px; 
     width: 100%;
     text-overflow: ellipsis;
+}
+textarea.optional{
+    background-color: #CCCCCCCC
 }
 
 .image-container{
