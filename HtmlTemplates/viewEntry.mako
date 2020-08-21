@@ -1,5 +1,9 @@
 <%def name="title()">FTC16072 Entries - ${pageTitle}</%def>
-<%def name="head()"></%def>
+<%def name="head()">
+<script src="https://d3js.org/d3.v5.min.js"></script>
+<script src="https://unpkg.com/@hpcc-js/wasm@0.3.11/dist/index.min.js"></script>
+<script src="https://unpkg.com/d3-graphviz@3.0.5/build/d3-graphviz.js"></script>
+</%def>
 <%inherit file = "base.mako"/>
     % if destination == "Screen":
         % if previousEntry:
@@ -34,6 +38,7 @@
                         nextSteps = []
                         notes = []
                         photos = []
+                        diagrams = []
                         for entry in entries:
                             if entries.index(entry) == len(entries) - 1:
                                 comma = " "
@@ -54,6 +59,8 @@
                                    photos.append(f"<IMG SRC='{entry.photoLink}' ALT='Photo'/>")
                             if entry.notes:
                                 notes.append(entry.memberName + ": " + entry.notes)
+                            if entry.diagramDot:
+                                diagrams.append(entry.diagramDot)
                     %>
             <td><UL>
                <LI>Accomplished
@@ -86,6 +93,17 @@
                     %for note in notes:
                         <li>${note} </li>
                     %endfor
+                <ul></li>
+               %endif
+               %if diagrams:
+                <li> Diagrams: <br/>
+                  %for diagram in diagrams:
+                    <div class="diagram" id="diagram-${loop.index}"></div>
+                    <script type="text/javascript">
+                        d3.select("#diagram-${loop.index}").graphviz().renderDot("${"".join(diagram.split())|n}");
+                    </script>
+                  %endfor
+                </li>
                %endif
             </UL>
             </td>

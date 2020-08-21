@@ -13,6 +13,8 @@
 % else:
 <body class="Screen">
 % endif
+<p style="text-align:right"><A HREF="/logout">Logout</A></p>
+
     ${self.body()}
 
 </body>

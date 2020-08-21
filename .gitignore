@@ -106,7 +106,12 @@ venv.bak/
 
 #data_files
 data/
-
 settings.json
 
 secrets.json
+
+#sesssion
+sessions/
+
+#editor stuff
+.vscode/
