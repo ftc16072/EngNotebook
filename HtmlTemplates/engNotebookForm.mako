@@ -48,9 +48,11 @@
     <label for="diagramDot">Diagram (using Dot):<a href="https://graphs.grevian.org/example" target="_blank">Examples</a></label>
     <br/>
     <div>
-    <textarea name="diagramDot" id="dotInput" class="optional" rows="8" cols="30" style="display:inline-block;vertical-align:middle;"></textarea>
-    <span id="graph" style="display:inline-block;vertical-align:middle;"></span>
+    <textarea name="diagramDot" id="dotInput" oninput="render()" class="optional" rows="8" cols="30" style="display:inline-block;vertical-align:top;"></textarea>
+    <span id="graph" style="display:inline-block;vertical-align:top;">
+    </span>
     </div>
+    <P id="error-message" style="invisible;color: red"></P>
     <br/>
     <label for="photo">Photo?</label>
     <br/>
@@ -60,7 +62,44 @@
 
 </form>
 <script type="text/javascript">
+    rendering = false
+    pendingUpdate = false
     dotInput = document.getElementById('dotInput')
-    dotInput.oninput = function(){
-        d3.select("#graph").graphviz().renderDot(dotInput.value)};
+    var graphviz = d3.select("#graph").graphviz()
+    .transition(function() {
+        return d3.transition().duration(500);
+    });
+    
+function render() {
+    dotSrc = dotInput.value;
+    if (!dotSrc) {
+        return;
+    }
+    if (rendering) {
+        pendingUpdate = true;
+        return;
+    }
+
+    rendering = true;
+    d3.select("#error-message").text("");
+    graphviz
+        .onerror(handleError)
+        .renderDot(dotSrc, done);
+}
+
+function handleError(errorMessage) {
+    // d3.select("#error-message").text(errorMessage);
+    rendering = false;""
+    if (pendingUpdate) {
+        pendingUpdate = false;
+        render();
+    }
+}    
+function done() {
+    rendering = false;
+    if (pendingUpdate) {
+        pendingUpdate = false;
+        render();
+    }
+}
 </script>
