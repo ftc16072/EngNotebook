@@ -101,11 +101,14 @@
                 <li> Diagrams: <br/>
                   <%
                     diagramIndex = diagramIndex + 1
-                  %
+                  %>
                   %for diagram in diagrams:
                     <div class="diagram" id="diagram-${diagramIndex}-${loop.index}"></div>
                     <script type="text/javascript">
-                        d3.select("#diagram-${loop.index}").graphviz().renderDot('${"".join(diagram.split())|n}');
+                        <%
+                        jsDiagram = diagram.replace('\\', '\\\\').replace("\r", " ").replace("\n", "\\n").replace("'", "\\'").replace('"', '\\"')
+                        %> 
+                        d3.select("#diagram-${diagramIndex}-${loop.index}").graphviz().renderDot("${jsDiagram|n}");
                     </script>
                   %endfor
                 </li>
