@@ -149,7 +149,7 @@ class FtcNotebook(object):
             return self.show_loginpage('')
 
         taskdict = dict(**kwargs)
-        with user.teams.dbConnect() as connection:
+        with user.team.dbConnect() as connection:
             for (k, v) in taskdict.items():
                 self.tasks.changeState(connection, taskId=k, newState=v)
         return self.tasksForm()
