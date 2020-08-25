@@ -100,7 +100,7 @@
                   %for diagram in diagrams:
                     <div class="diagram" id="diagram-${loop.index}"></div>
                     <script type="text/javascript">
-                        d3.select("#diagram-${loop.index}").graphviz().renderDot("${"".join(diagram.split())|n}");
+                        d3.select("#diagram-${loop.index}").graphviz().renderDot('''${"".join(diagram.split())|n}''');
                     </script>
                   %endfor
                 </li>
