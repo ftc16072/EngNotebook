@@ -65,8 +65,11 @@
                 </UL>
             %endif
             %if diagrams:
+               %
+                    diagramIndex = diagramIndex + 1
+               %
                %for diagram in diagrams:
-               <div class="diagram" id="diagram-${loop.index}"></div>
+               <div class="diagram" id="diagram-${diagramIndex}-${loop.index}"></div>
                <script type="text/javascript">
                     d3.select("#diagram-${loop.index}").graphviz().renderDot('${"".join(diagram.split())|n}');
                </script>
