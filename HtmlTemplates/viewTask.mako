@@ -65,9 +65,9 @@
                 </UL>
             %endif
             %if diagrams:
-               %
+               <%
                     diagramIndex = diagramIndex + 1
-               %
+               %>
                %for diagram in diagrams:
                <div class="diagram" id="diagram-${diagramIndex}-${loop.index}"></div>
                <script type="text/javascript">
