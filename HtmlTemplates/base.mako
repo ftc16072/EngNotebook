@@ -8,7 +8,7 @@
    <link rel="stylesheet" href="static/style.css">
   
 </head>
-% if destination and destination == "Screen":
+% if destination and destination != "Screen":
 <body>
 % else:
 <body class="Screen">
