@@ -16,7 +16,9 @@
             <th class="picture">Picture(s)</th>
             <th class="notes">Notes and Diagrams</th>
         </tr>
-        `
+        <%
+            diagramIndex = 0
+        %>
         % for date, entries in dateDictionary.items():
             <tr>
             % if destination == "Screen":

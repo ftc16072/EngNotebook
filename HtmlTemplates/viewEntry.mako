@@ -21,7 +21,9 @@
             <th class="details">Details</th>
             <th class="picture">Picture(s)</th>
         </tr>
-        
+        <%
+            diagramIndex = 0
+        %>
         % for item, entries in tasksDictionary.items():
             <tr>
                     % if destination == "Screen":
@@ -99,7 +101,7 @@
                 <li> Diagrams: <br/>
                   <%
                     diagramIndex = diagramIndex + 1
-                  %>
+                  %
                   %for diagram in diagrams:
                     <div class="diagram" id="diagram-${diagramIndex}-${loop.index}"></div>
                     <script type="text/javascript">
