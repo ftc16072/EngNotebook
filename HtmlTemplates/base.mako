@@ -9,7 +9,7 @@
   
 </head>
 % if destination and destination != "Screen":
-<body>
+<body class="Print">
 % else:
 <body class="Screen">
 % endif
