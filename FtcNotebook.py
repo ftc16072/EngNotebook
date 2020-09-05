@@ -115,14 +115,13 @@ class FtcNotebook(object):
         if not user:
             return self.show_loginpage('')
 
-        if photo.filename:
-            print("******" + dateString[:4])
-            imgKey = smugmug.upload_data(photo.filename, photo.file.read(),
-                                         smugmugConfig, dateString[:4])
-        else:
-            imgKey = ""
-
         with user.team.dbConnect() as connection:
+            if photo.filename:
+                imgKey = smugmug.upload_data(connection, photo.filename,
+                                             photo.file.read(), smugmugConfig,
+                                             dateString)
+            else:
+                imgKey = ""
             user.team.entries.addEntry(connection, dateString, taskId,
                                        memberId, accomplished, why, learning,
                                        next_steps, notes, diagramDot, imgKey,

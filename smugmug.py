@@ -9,27 +9,42 @@ import time
 from rauth import OAuth1Session
 
 headers = {
-    # this is a pointer to the 2019-2020 engineering notebook
-    'X-Smug-AlbumURI': '/api/v2/album/VgQcSw',
     'X-Smug-ResponseType': 'JSON',
     'X-Smug-Verson': 'v2'
 }
 
 
-def upload_data(filename, img_data, config, year):
-    ## TODO: Add AlbumURIs to database
-    if year == 2019:
-        headers['X-Smug-AlbumURI'] = '/api/v2/album/VgQcSw'
-    elif year == 2020:
-        headers['X-Smug-AlbumURI'] = '/api/v2/album/2z78cj'
-    else:
-        headers['X-Smug-AlbumURI'] = '/api/v2/album/2z78cj'
+def createTable(connection):
+    connection.execute("""
+        CREATE TABLE smugmugAlbums (
+            startDate text NOT NULL UNIQUE,
+            name text NOT NULL)""")
+
+
+def addEntry(connection, dateString, albumId):
+    connection.execute(
+        "INSERT INTO smugmugAlbums (startDate, name) Values (?,?)",
+        (dateString, albumId))
+
+
+def getAlbum(connection, dateString):
+    lastGood = ""
+    for row in connection.execute(
+            "SELECT * from smugmugAlbums ORDER BY startDate ASC"):
+        if row[0] > dateString:
+            break
+        lastGood = row[1]
+    return lastGood
+
+
+def upload_data(connection, filename, img_data, config, dateString):
+    headers['X-Smug-AlbumURI'] = getAlbum(connection, dateString)
 
     session = OAuth1Session(consumer_key=config['app_key'],
                             consumer_secret=config['app_secret'],
                             access_token=config['user_token'],
                             access_token_secret=config['user_secret'])
-    print("*****************" + filename)
+
     headers['X-Smug-FileName'] = filename
     headers['Content-Length'] = str(len(img_data))
     headers['Content-Type'] = image_type = mimetypes.guess_type(filename)[0]
@@ -43,11 +58,6 @@ def upload_data(filename, img_data, config, year):
     print(imgKey)
 
     return imgKey
-
-
-def upload_file(filename, config, year):
-    img_data = open(filename, 'rb').read()
-    return upload_data(filename, img_data, year)
 
 
 base_api = 'https://www.smugmug.com/api/v2/image/'
@@ -76,12 +86,6 @@ def getLargestImage(imgKey, config):
 
 
 if __name__ == "main":
-    config = json.load(open('secrets.json', 'r'))
-    imgKey = upload_file('Duck only.png', config)
-
-    print(f'Image Key: {imgKey}')
-    print('waiting 2 seconds')
-    time.sleep(2)
-
-    medium_link = get_medium_link(imgKey, config)
-    print(medium_link)
+    
+    # need test code here
+    pass

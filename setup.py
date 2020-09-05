@@ -1,28 +1,30 @@
-import sqlite3
-import os
-
-from entries import Entries
+from users import Users
 from members import Members
-from tasks import Tasks
+from team import Team
+import smugmug
 
-entries = Entries()
-members = Members()
-tasks = Tasks()
+USER_NAME = "alan@randomsmiths.com"
+TEAM_NAME = "ftc16072"
+PASSWORD = "password"
 
-memberList = ["Andrew", "Chirag", "Eric", "Izaak", "Nithya", "Philip", "Preeti", "Rishi", "Arjun", "Ryan", "Nikhil"]
+membersList = [
+    "Andrew", "Chirag", "Eric", "Izaak", "Nithya", "Philip", "Preeti", "Rishi",
+    "Arjun", "Ryan", "Nikhil"
+]
+albumDict = {
+    '2019-04-01': '/api/v2/album/VgQcSw',
+    '2020-03-01': '/api/v2/album/2z78cj'
+}
 
-DEFAULT_PATH = os.path.join(os.path.dirname(__file__), 'data/database.sqlite3')
-
-try:
-    os.remove(DEFAULT_PATH)
-except IOError:
-    pass #delete File, if it doesn't exist we don't care
-
-with sqlite3.connect(DEFAULT_PATH) as connection:
-    members.createTable(connection)
-    members.insertMembers(connection, memberList)
-    tasks.createTable(connection)
-    entries.createTable(connection)
-    
-
-
+if __name__ == "__main__":
+    users = Users()
+    members = Members()
+    team = Team(TEAM_NAME)
+    users.add(USER_NAME, TEAM_NAME, PASSWORD)
+    user = users.getUser(USER_NAME, PASSWORD)
+    with user.team.dbConnect() as connection:
+        members.createTable(connection)
+        members.insertMembers(connection, membersList)
+        smugmug.createTable(connection)
+        for date, album in albumDict:
+            smugmug.addEntry(connection, date, album)
