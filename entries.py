@@ -7,7 +7,7 @@ import datetime
 from tasks import Tasks, Task, TaskStages
 from members import Members, Member
 
-SCHEMA_VERSION = 6
+SCHEMA_VERSION = 7
 
 
 class Entry():

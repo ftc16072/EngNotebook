@@ -58,7 +58,7 @@ if __name__ == "__main__":
     user = users.getUser('alan@randomsmiths.com', 'password')
     if not user:
         print('Failure verifying good one')
-    print(f'Success: {user.teams.databaseName}')
+    print(f'Success')
 
     # Check bad password
     user = users.getUser('alan@randomsmiths.com', 'badpass')
