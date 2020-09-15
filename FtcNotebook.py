@@ -150,7 +150,9 @@ class FtcNotebook(object):
         taskdict = dict(**kwargs)
         with user.team.dbConnect() as connection:
             for (k, v) in taskdict.items():
-                self.tasks.changeState(connection, taskId=k, newState=v)
+                user.team.entries.tasks.changeState(connection,
+                                                    taskId=k,
+                                                    newState=v)
         return self.tasksForm()
 
     @cherrypy.expose
