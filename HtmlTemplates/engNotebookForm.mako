@@ -18,12 +18,17 @@
         % endfor
     </select>
     <br/>
-    <label for="taskId">What did you work on?</label> <br/>
+    <label for="taskId">What did you work on?</label> 
+    <button onclick= "window.location.href = '/tasksForm';">Update/Add Tasks</button>
+     <br/>
     <select name ="taskId">
         % for task in tasks:
             <option value=${task.taskId}>${task.name}</option>
         % endfor
     </select>
+    <br/>
+    <label for="hours">How many hours did you spend?</label><br/>
+    <input type="number" name="hours" value="0" min="0" step="any" />
     <br/>
     <label for="accomplished">What did you do?</label>
     <br/>
