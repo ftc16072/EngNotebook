@@ -156,6 +156,33 @@ class Entries():
 
         return entryDict
 
+    def getEntriesWithHours(self, dbConnection):
+        entries = []
+        for row in dbConnection.execute(
+                """
+           SELECT tasks.name, members.name, date, hours
+           FROM Entries
+           INNER JOIN tasks
+            ON Entries.task_id = Tasks.id
+           INNER JOIN members
+            ON Entries.member_id = Members.id
+           WHERE (hours > 0) ORDER BY date ASC
+            """, ()):
+            entries.append(
+                Entry(date=row[2],
+                      taskName=row[0],
+                      memberName=row[1],
+                      hours=row[3],
+                      accomplished="",
+                      why="",
+                      learned="",
+                      nextSteps="",
+                      notes="",
+                      diagramDot="",
+                      photoLink="",
+                      imgKey=""))
+        return entries
+
     def getDateDictionary(self, taskId, dbConnection, smugmugConfig):
         entryDict = {}
         taskName = ""

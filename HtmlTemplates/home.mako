@@ -36,4 +36,6 @@
 </form>
 </td>
 </tr>
+<tr><td><button onclick= "window.location.href = '/hours';">View Hours</button></td></tr>
+
 </table>
