@@ -23,6 +23,24 @@ label {
 H1 {
     text-align:center
 }
+table.Hours {
+     border-collapse:collapse;
+    border: 1px solid black;
+    table-layout: fixed;
+    overflow: hidden;
+    width: 98%;   
+    margin-left: auto;
+    margin-right: auto;   
+}
+table.Hours th{
+    border: 1px solid black;
+    background-color: black;
+    color: #f9b813;
+}
+table.Hours td{
+    border:1px solid black;
+}
+
 table.Minutes {
     border-collapse:collapse;
     border: 1px solid black;

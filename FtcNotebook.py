@@ -109,7 +109,7 @@ class FtcNotebook(object):
                              tasks=taskList)
 
     @cherrypy.expose
-    def addEntry(self, dateString, memberId, taskId, accomplished, why,
+    def addEntry(self, dateString, memberId, taskId, hours, accomplished, why,
                  learning, next_steps, notes, diagramDot, photo):
         user = self.getUser()
         if not user:
@@ -123,9 +123,9 @@ class FtcNotebook(object):
             else:
                 imgKey = ""
             user.team.entries.addEntry(connection, dateString, taskId,
-                                       memberId, accomplished, why, learning,
-                                       next_steps, notes, diagramDot, imgKey,
-                                       smugmugConfig)
+                                       memberId, hours, accomplished, why,
+                                       learning, next_steps, notes, diagramDot,
+                                       imgKey, smugmugConfig)
 
         return self.newEntry()
 
@@ -211,6 +211,17 @@ class FtcNotebook(object):
         with user.team.dbConnect() as connection:
             taskId = user.team.entries.tasks.getTaskId(connection, taskName)
         return self.viewTask(taskId, destination)
+
+    @cherrypy.expose
+    def hours(self):
+        user = self.getUser()
+        if not user:
+            return self.show_loginpage('')
+        with user.team.dbConnect() as connection:
+            entries = user.team.entries.getEntriesWithHours(connection)
+        return self.template('viewHours.mako',
+                             entries=entries,
+                             pageTitle="Hours")
 
     @cherrypy.expose
     def gotoSmugmug(self, imgkey):

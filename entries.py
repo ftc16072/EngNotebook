@@ -7,16 +7,17 @@ import datetime
 from tasks import Tasks, Task, TaskStages
 from members import Members, Member
 
-SCHEMA_VERSION = 7
+SCHEMA_VERSION = 8
 
 
 class Entry():
-    def __init__(self, date, taskName, memberName, accomplished, why, learned,
-                 nextSteps, notes, diagramDot, photoLink, imgKey):
+    def __init__(self, date, taskName, memberName, hours, accomplished, why,
+                 learned, nextSteps, notes, diagramDot, photoLink, imgKey):
         self.date = date
         self.taskName = taskName
         self.memberName = memberName
         self.accomplished = accomplished
+        self.hours = hours
         self.why = why
         self.learned = learned
         self.nextSteps = nextSteps
@@ -45,6 +46,7 @@ class Entries():
             date TEXT NOT NULL,
             task_id INTEGER NOT NULL,
             member_id INTEGER NOT NULL,
+            hours REAL,
             accomplished TEXT,
             why TEXT,
             learned TEXT,
@@ -58,13 +60,14 @@ class Entries():
 
         dbConnection.execute('PRAGMA schema_version = ' + str(SCHEMA_VERSION))
 
-    def addEntry(self, dbConnection, date, taskId, memberId, accomplished, why,
-                 learned, nextSteps, notes, diagramDot, photo, smugmugConfig):
+    def addEntry(self, dbConnection, date, taskId, memberId, hours,
+                 accomplished, why, learned, nextSteps, notes, diagramDot,
+                 photo, smugmugConfig):
 
         dbConnection.execute(
-            "Insert INTO Entries (date, task_id, member_id, accomplished, why, learned, next_steps, notes, diagramDot, imgKey) VALUES (?,?,?,?,?,?,?,?,?,?)",
-            (date, taskId, memberId, accomplished, why, learned, nextSteps,
-             notes, diagramDot, photo))
+            "Insert INTO Entries (date, task_id, member_id, hours,accomplished, why, learned, next_steps, notes, diagramDot, imgKey) VALUES (?,?,?,?,?,?,?,?,?,?,?)",
+            (date, taskId, memberId, hours, accomplished, why, learned,
+             nextSteps, notes, diagramDot, photo))
 
     def migrate(self, dbConnection, dbSchemaVersion):
         if dbSchemaVersion > SCHEMA_VERSION:
@@ -75,6 +78,8 @@ class Entries():
             dbConnection.execute("ALTER TABLE Entries ADD notes TEXT")
         if dbSchemaVersion < 6:
             dbConnection.execute("ALTER TABLE Entries ADD diagramDot TEXT")
+        if dbSchemaVersion < 8:
+            dbConnection.execute("ALTER TABLE Entries ADD hours REAL ")
 
         self.tasks.migrate(dbConnection, dbSchemaVersion)
         self.members.migrate(dbConnection, dbSchemaVersion)
@@ -115,7 +120,7 @@ class Entries():
         entryDict = {}
         for row in dbConnection.execute(
                 """
-           SELECT tasks.name, members.name, accomplished, why, learned, next_steps, notes, diagramDot, photo_link, imgkey, Entries.id
+           SELECT tasks.name, members.name, accomplished, why, learned, next_steps, notes, diagramDot, photo_link, imgkey, Entries.id, hours
            FROM Entries
            INNER JOIN tasks
             ON Entries.task_id = Tasks.id
@@ -134,21 +139,49 @@ class Entries():
             photoLink = row[8]
             imgKey = row[9]
             entriesId = row[10]
+            hours = row[11]
 
             if not (photoLink):
                 if imgKey:
                     photoLink = self.updateSmugmugLink(dbConnection,
                                                        smugmugConfig,
                                                        entriesId, imgKey)
-            newEntry = Entry(dateStr, taskName, memberName, accomplished, why,
-                             learned, next_steps, notes, diagramDot, photoLink,
-                             imgKey)
+            newEntry = Entry(dateStr, taskName, memberName, hours,
+                             accomplished, why, learned, next_steps, notes,
+                             diagramDot, photoLink, imgKey)
             if not (row[0] in entryDict.keys()):
                 entryDict[row[0]] = [newEntry]
             else:
                 entryDict[row[0]].append(newEntry)
 
         return entryDict
+
+    def getEntriesWithHours(self, dbConnection):
+        entries = []
+        for row in dbConnection.execute(
+                """
+           SELECT tasks.name, members.name, date, hours
+           FROM Entries
+           INNER JOIN tasks
+            ON Entries.task_id = Tasks.id
+           INNER JOIN members
+            ON Entries.member_id = Members.id
+           WHERE (hours > 0) ORDER BY date ASC
+            """, ()):
+            entries.append(
+                Entry(date=row[2],
+                      taskName=row[0],
+                      memberName=row[1],
+                      hours=row[3],
+                      accomplished="",
+                      why="",
+                      learned="",
+                      nextSteps="",
+                      notes="",
+                      diagramDot="",
+                      photoLink="",
+                      imgKey=""))
+        return entries
 
     def getDateDictionary(self, taskId, dbConnection, smugmugConfig):
         entryDict = {}
@@ -175,6 +208,7 @@ class Entries():
             newEntry = Entry(date=row[6],
                              taskName=taskName,
                              memberName=row[1],
+                             hours=0,
                              accomplished=row[2],
                              learned="",
                              nextSteps="",

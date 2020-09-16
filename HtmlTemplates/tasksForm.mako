@@ -1,7 +1,7 @@
 <%def name="title()">Tasks Form - ftc16072 </%def>
 <%def name="head()"></%def>
 <%inherit file = "base.mako"/>
-<a href="index">Back</a> <br> <br> <br>
+<a href="javascript:history.back()">Back</a> <br> <br> <br>
 <fieldset> <legend>Add Task</legend>
 <form action="addTasks" method="post" enctype="multipart/form-data">
     <label for="task">Task Name:</label>
