@@ -184,16 +184,7 @@ class FtcNotebook(object):
                 dateString, connection, smugmugConfig)
             (previousEntry, nextEntry) = user.team.entries.getPrevNext(
                 connection, dateString)
-        return self.template('viewEntry.mako',
-                             previousEntry=previousEntry,
-                             nextEntry=nextEntry,
-                             tasksDictionary=tasksDictionary,
-                             pageTitle=dateString,
-                             destination=destination)
 
-        with self.dbConnect() as connection:
-            tasksDictionary = self.entries.getDateTasksDictionary(dateString, connection, smugmugConfig)
-            (previousEntry, nextEntry) = self.entries.getPrevNext(connection, dateString)
         if destination == "download":
             path = "data/entryTex.tex"
             try:
@@ -211,7 +202,12 @@ class FtcNotebook(object):
 
 
         else:
-            return self.template('viewEntry.mako', previousEntry=previousEntry, nextEntry=nextEntry, tasksDictionary=tasksDictionary, pageTitle=dateString, destination=destination)
+            return self.template('viewEntry.mako',
+                                         previousEntry=previousEntry,
+                                         nextEntry=nextEntry,
+                                         tasksDictionary=tasksDictionary,
+                                         pageTitle=dateString,
+                                         destination=destination)
 
     @cherrypy.expose
     def viewTask(self, taskId, destination="Screen"):
