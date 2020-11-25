@@ -3,6 +3,7 @@ import os
 import sqlite3
 import json
 import cherrypy
+from cherrypy.lib import static
 
 from mako.lookup import TemplateLookup
 
@@ -35,6 +36,21 @@ class FtcNotebook(object):
     def __init__(self):
         self.lookup = TemplateLookup(directories=['HtmlTemplates'],
                                      default_filters=['h'])
+        self.lookup = TemplateLookup(directories = ['HtmlTemplates'], default_filters=['h'])
+        self.latexLookup = TemplateLookup(directories = ['laTeXTempletes'], default_filters=['h'])
+        self.tasks = Tasks()
+        self.members = Members()
+        self.entries = Entries()
+        with self.dbConnect() as connection:
+            if not os.path.exists(DB_STRING):
+                self.entries.createTable(connection)
+            else:
+                data = connection.execute("PRAGMA schema_version").fetchone()
+                if data[0] != self.entries.SCHEMA_VERSION:
+                    self.entries.migrate(connection, data[0])
+
+    def dbConnect(self):
+        return sqlite3.connect(DB_STRING, detect_types=sqlite3.PARSE_DECLTYPES)
 
     def template(self, template_name, **kwargs):
         return self.lookup.get_template(template_name).render(**kwargs)
