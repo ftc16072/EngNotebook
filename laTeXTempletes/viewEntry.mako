@@ -9,11 +9,10 @@
 
 \subsection{${date}}
 
-\begin{longtable}{|p{17 cm}|}%
+\begin{longtable}{|m{5 cm}|m{7 cm}|m{7 cm}|}%
 \hline%
+Task & Details & Photo
 \endhead%
-\hline%
-Continued on Next Page\\%
 \hline%
 \endfoot%
 \hline%
@@ -22,7 +21,7 @@ Continued on Next Page\\%
 <% print(taskDict) %>
 % for task, entries in taskDict.items():
     \hline
-    Task: ${task} \\
+    ${task} &
     \hline
         <%
             teamMembers = []
@@ -30,6 +29,7 @@ Continued on Next Page\\%
             why = []
             learned = []
             nextSteps = []
+            notes = []
             photos = []
             for entry in entries:
                 teamMembers.append(entry.memberName)
@@ -44,7 +44,9 @@ Continued on Next Page\\%
                 if entry.nextSteps:
                     nextSteps.append(entry.memberName + ": " + entry.nextSteps)
                 if entry.photoLink:
-                    photos.append(f"{entry.photoLink}")
+                    photos.append(f"{entry.imgKey}")
+                if entry.notes:
+                    notes.append(entry.memberName + ": " + entry.notes)
         %> 
             %if accomplished:
                 Accomplished: \begin{itemize}
@@ -76,16 +78,28 @@ Continued on Next Page\\%
                                     %for item in nextSteps:
                                         \item ${item}
                                     %endfor
-                                \end{itemize} \\
+        
+                                \end{itemize}
                                 \hline
             %endif
+            %if notes:
+                Notes:\begin{itemize}
+                    %for note in notes:
+                        \item ${note} 
+                    %endfor
+                \end{itemize}
+               %endif
+            &
             %if photos:
-                Pictures:
-                    %for link in photos:
-                        \smugmugphoto{${link}}{${link.rsplit('/', 1)[-1]}}
+                    %for key in photos:
+                        `${key}`
                     %endfor
             %endif
+            \tabularnewline
+
         
 %endfor
+\hline
+>>>>>>> Stashed changes
 
 \end{longtable}%

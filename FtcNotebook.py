@@ -1,4 +1,6 @@
 import os
+import io
+import zipfile
 import yaml
 import sqlite3
 import json
@@ -7,6 +9,7 @@ from cherrypy.lib import static
 from mako.lookup import TemplateLookup
 import datetime
 import glob
+import users
 from entries import Entries
 from tasks import Tasks, Task, TaskStages
 from members import Members, Member
@@ -36,10 +39,6 @@ class Cookie(object):
 class FtcNotebook(object):
     
     def __init__(self):
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> merge attempt
         self.lookup = TemplateLookup(directories = ['HtmlTemplates'], default_filters=['h'])
         self.latexLookup = TemplateLookup(directories = ['laTeXTempletes'], default_filters=['h'])
         self.tasks = Tasks()
@@ -52,13 +51,6 @@ class FtcNotebook(object):
                 data = connection.execute("PRAGMA schema_version").fetchone()
                 if data[0] != self.entries.SCHEMA_VERSION:
                     self.entries.migrate(connection, data[0])
-<<<<<<< HEAD
-=======
-        self.lookup = TemplateLookup(directories=['HtmlTemplates'],
-                                     default_filters=['h'])
->>>>>>> Changes to get back working
-=======
->>>>>>> merge attempt
 
     def dbConnect(self):
         return sqlite3.connect(DB_STRING, detect_types=sqlite3.PARSE_DECLTYPES)
@@ -241,6 +233,42 @@ class FtcNotebook(object):
                                  pageTitle=dateString,
                                  destination=destination)
 
+
+        with user.team.dbConnect() as connection:
+            tasksDictionary = user.team.entries.getDateTasksDictionary(
+                dateString, connection, smugmugConfig)
+            (previousEntry, nextEntry) = user.team.entries.getPrevNext(
+                connection, dateString)
+
+        if destination == "download":
+            path = "data/" + dateString + ".tex"
+            try:
+                os.remove(path)
+            except IOError:
+                pass  #delete File, if it doesn't exist we don't care
+            with open(path, "a") as file:
+                monthName = datetime.date(2020, int(dateString[5:-3]),
+                                          1).strftime('%B')
+                wholedate = monthName + " " + dateString[-2:]
+                file.write(
+                    self.LaTeXtemplate('viewEntry.mako',
+                                       date=wholedate,
+                                       taskDict=tasksDictionary))
+            fullpath = os.path.join(os.path.dirname(__file__), path)
+            print(os.path.dirname(__file__))
+            print(fullpath)
+            return static.serve_file(os.path.abspath(fullpath),
+                                     'application/x-download', 'entryTex',
+                                     os.path.basename(path))
+
+        else:
+            return self.template('viewEntry.mako',
+                                 previousEntry=previousEntry,
+                                 nextEntry=nextEntry,
+                                 tasksDictionary=tasksDictionary,
+                                 pageTitle=dateString,
+                                 destination=destination)
+
     @cherrypy.expose
     def viewTask(self, taskId, destination="Screen"):
         user = self.getUser()
@@ -285,27 +313,20 @@ class FtcNotebook(object):
 
     @cherrypy.expose
     def downloadAll(self):
-        path = "data/entryTex.tex"
-        try:
-            os.remove(path)
-        except IOError:
-            pass #delete File, if it doesn't exist we don't care
-        with open(path, "a") as file:
-            with self.dbConnect() as connection:
+        latexFiles = io.BytesIO()
+        ''' with self.dbConnect() as connection:
+                dateList = self.entries.getDateList(connection)
+                
+                    file.write(self.LaTeXtemplate('viewEntry.mako', date=wholedate, taskDict=tasksDictionary))'''
+        with zipfile.ZipFile(latexFiles, "a", zipfile.ZIP_DEFLATED, False) as zf:
+            with user.team.dbConnect() as connection:
                 dateList = self.entries.getDateList(connection)
                 for dateString in dateList:
                     tasksDictionary = self.entries.getDateTasksDictionary(dateString, connection, smugmugConfig)
                     monthName = datetime.date(2020, int(dateString[5:-3]), 1).strftime('%B')
                     wholedate = monthName + " " + dateString[-2:]
-                    file.write(self.LaTeXtemplate('viewEntry.mako', date=wholedate, taskDict=tasksDictionary))
-        fullpath = os.path.join(os.path.dirname(__file__), path)
-        print(os.path.dirname(__file__))
-        print(fullpath)
-        #return static.serve_file(os.path.abspath(fullpath), 'application/x-download','entryTex', os.path.basename(path))
-        new_url = smugmug.getLargestImage(imgkey, smugmugConfig)
-        raise cherrypy.HTTPRedirect(new_url, status=301)
 
-        return f"written to {fullpath}"
+        return static.serve_file(latexFiles, 'application/x-download','entryTex')
 
 
 
