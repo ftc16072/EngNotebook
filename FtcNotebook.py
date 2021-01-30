@@ -64,6 +64,9 @@ class FtcNotebook(object):
     def LaTeXtemplate(self, template_name, **kwargs):
         return self.latexLookup.get_template(template_name).render(**kwargs)
 
+    def LaTeXtemplate(self, template_name, **kwargs):
+        return self.latexLookup.get_template(template_name).render(**kwargs)
+
     def getUser(self):
         username = Cookie('username').get()
         team = Cookie('team').get()

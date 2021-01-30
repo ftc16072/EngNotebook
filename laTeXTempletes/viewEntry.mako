@@ -77,8 +77,7 @@ Task & Details & Photo
                  Next Steps \begin{itemize}
                                     %for item in nextSteps:
                                         \item ${item}
-                                    %endfor
-        
+                                    %endfor        
                                 \end{itemize}
                                 \hline
             %endif
@@ -100,6 +99,6 @@ Task & Details & Photo
         
 %endfor
 \hline
->>>>>>> Stashed changes
+
 
 \end{longtable}%
