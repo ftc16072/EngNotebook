@@ -95,7 +95,7 @@
                     %for note in notes:
                         <li>${note.replace("\n", "<br/>" | n)} </li>
                     %endfor
-                <ul></li>
+                </ul></li>
                %endif
                %if diagrams:
                 <li> Diagrams: <br/>
