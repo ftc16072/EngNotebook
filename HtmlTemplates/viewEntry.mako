@@ -93,7 +93,7 @@
                %if notes:
                 <li> Notes: <ul>
                     %for note in notes:
-                        <li>${note.replace("\n", "<br/>" | n)} </li>
+                        <li>${note.replace("\n", "<br/>")|n} </li>
                     %endfor
                 </ul></li>
                %endif
