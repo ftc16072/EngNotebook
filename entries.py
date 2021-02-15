@@ -197,11 +197,10 @@ class Entries():
            WHERE (Tasks.id = ?) ORDER BY date ASC
             """, (taskId, )):
             taskName = row[0]
-            photoLink = ""
-            imgKey = ""
-            if not (row[3]):
-                if row[4]:
-                    imgKey = row[4]
+            photoLink = row[3]
+            imgKey = row[4]
+            if not (photoLink):
+                if imgKey:
                     photoLink = self.updateSmugmugLink(dbConnection,
                                                        smugmugConfig, row[5],
                                                        imgKey)
