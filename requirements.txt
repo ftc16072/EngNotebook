@@ -11,7 +11,7 @@ more-itertools==7.2.0
 passlib==1.7.2
 portend==2.5
 pytz==2019.2
-PyYAML==5.1.2
+PyYAML==5.4
 rauth==0.7.3
 requests==2.22.0
 six==1.12.0
