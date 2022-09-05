@@ -7,12 +7,12 @@ import datetime
 from tasks import Tasks, Task, TaskStages
 from members import Members, Member
 
-SCHEMA_VERSION = 8
+SCHEMA_VERSION = 9
 
 
 class Entry():
     def __init__(self, date, taskName, memberName, hours, accomplished, why,
-                 learned, nextSteps, notes, diagramDot, photoLink, imgKey):
+                 learned, nextSteps, notes, diagram, photoLink, imgKey):
         self.date = date
         self.taskName = taskName
         self.memberName = memberName
@@ -22,7 +22,7 @@ class Entry():
         self.learned = learned
         self.nextSteps = nextSteps
         self.notes = notes
-        self.diagramDot = diagramDot
+        self.diagram = diagram
         self.photoLink = photoLink
         self.imgKey = imgKey
 
@@ -61,13 +61,13 @@ class Entries():
         dbConnection.execute('PRAGMA schema_version = ' + str(SCHEMA_VERSION))
 
     def addEntry(self, dbConnection, date, taskId, memberId, hours,
-                 accomplished, why, learned, nextSteps, notes, diagramDot,
+                 accomplished, why, learned, nextSteps, notes, diagram,
                  photo, smugmugConfig):
 
         dbConnection.execute(
-            "Insert INTO Entries (date, task_id, member_id, hours,accomplished, why, learned, next_steps, notes, diagramDot, imgKey) VALUES (?,?,?,?,?,?,?,?,?,?,?)",
+            "Insert INTO Entries (date, task_id, member_id, hours,accomplished, why, learned, next_steps, notes, diagram, imgKey) VALUES (?,?,?,?,?,?,?,?,?,?,?)",
             (date, taskId, memberId, hours, accomplished, why, learned,
-             nextSteps, notes, diagramDot, photo))
+             nextSteps, notes, diagram, photo))
 
     def migrate(self, dbConnection, dbSchemaVersion):
         if dbSchemaVersion > SCHEMA_VERSION:
@@ -80,6 +80,8 @@ class Entries():
             dbConnection.execute("ALTER TABLE Entries ADD diagramDot TEXT")
         if dbSchemaVersion < 8:
             dbConnection.execute("ALTER TABLE Entries ADD hours REAL ")
+        if dbSchemaVersion < 9:
+            dbConnection.execute("ALTER TABLE Entries RENAME COLUMN diagramDot TO diagram")
 
         self.tasks.migrate(dbConnection, dbSchemaVersion)
         self.members.migrate(dbConnection, dbSchemaVersion)
@@ -120,7 +122,7 @@ class Entries():
         entryDict = {}
         for row in dbConnection.execute(
                 """
-           SELECT tasks.name, members.name, accomplished, why, learned, next_steps, notes, diagramDot, photo_link, imgkey, Entries.id, hours
+           SELECT tasks.name, members.name, accomplished, why, learned, next_steps, notes, diagram, photo_link, imgkey, Entries.id, hours
            FROM Entries
            INNER JOIN tasks
             ON Entries.task_id = Tasks.id
@@ -135,7 +137,7 @@ class Entries():
             learned = row[4]
             next_steps = row[5]
             notes = row[6]
-            diagramDot = row[7]
+            diagram = row[7]
             photoLink = row[8]
             imgKey = row[9]
             entriesId = row[10]
@@ -148,7 +150,7 @@ class Entries():
                                                        entriesId, imgKey)
             newEntry = Entry(dateStr, taskName, memberName, hours,
                              accomplished, why, learned, next_steps, notes,
-                             diagramDot, photoLink, imgKey)
+                             diagram, photoLink, imgKey)
             if not (row[0] in entryDict.keys()):
                 entryDict[row[0]] = [newEntry]
             else:
@@ -178,7 +180,7 @@ class Entries():
                       learned="",
                       nextSteps="",
                       notes="",
-                      diagramDot="",
+                      diagram="",
                       photoLink="",
                       imgKey=""))
         return entries
@@ -188,7 +190,7 @@ class Entries():
         taskName = ""
         for row in dbConnection.execute(
                 """
-           SELECT tasks.name, members.name, accomplished, photo_link, imgkey, Entries.id, date, why, notes, diagramDot
+           SELECT tasks.name, members.name, accomplished, photo_link, imgkey, Entries.id, date, why, notes, diagram
            FROM Entries
            INNER JOIN tasks
             ON Entries.task_id = Tasks.id
@@ -215,7 +217,7 @@ class Entries():
                              imgKey=imgKey,
                              why=row[7],
                              notes=row[8],
-                             diagramDot=row[9])
+                             diagram=row[9])
             if not (row[6] in entryDict.keys()):
                 entryDict[row[6]] = [newEntry]
             else:
