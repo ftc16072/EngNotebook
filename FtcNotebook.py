@@ -238,3 +238,4 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     cherrypy.config.update(args.conf)
+    cherrypy.quickstart(FtcNotebook(), '', args.conf)
