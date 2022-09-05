@@ -2,6 +2,7 @@ import datetime
 import os
 import sqlite3
 import json
+import argparse
 import cherrypy
 
 from mako.lookup import TemplateLookup
@@ -231,4 +232,9 @@ class FtcNotebook(object):
 
 if __name__ == "__main__":
     smugmugConfig = json.load(open('secrets.json', 'r'))
-    cherrypy.quickstart(FtcNotebook(), config='development.conf')
+    parser = argparse.ArgumentParser(
+        description="FtcNotebook - for creating ftc notebooks")
+    parser.add_argument('conf')
+    args = parser.parse_args()
+
+    cherrypy.config.update(args.conf)
