@@ -1,8 +1,9 @@
 <%def name="title()">Entry Form-ftc16072</%def>
 <%def name="head()">
-<script src="https://d3js.org/d3.v5.min.js"></script>
-<script src="https://unpkg.com/@hpcc-js/wasm@0.3.11/dist/index.min.js"></script>
-<script src="https://unpkg.com/d3-graphviz@3.0.5/build/d3-graphviz.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script>
+    mermaid.initialize({ startOnLoad: false });
+</script>
 </%def>
 <%inherit file = "base.mako"/>
 <a href="index">Back<a>
@@ -50,10 +51,10 @@
     <br/>
     <textarea name="notes" class="optional" rows="5" cols="30"></textarea>
     <br/>
-    <label for="diagramDot">Diagram (using Dot):<a href="https://graphs.grevian.org/example" target="_blank">Examples</a></label>
+    <label for="diagram">Diagram (using Mermaid):<a href="https://mermaid.live" target="_blank">Live Editor</a></label>
     <br/>
     <div>
-    <textarea name="diagramDot" id="dotInput" oninput="render()" class="optional" rows="8" cols="30" style="display:inline-block;vertical-align:top;"></textarea>
+    <textarea name="diagram" id="input" oninput="render()" class="optional" rows="8" cols="30" style="display:inline-block;vertical-align:top;"></textarea>
     <span id="graph" style="display:inline-block;vertical-align:top;">
     </span>
     </div>
@@ -69,15 +70,11 @@
 <script type="text/javascript">
     rendering = false
     pendingUpdate = false
-    dotInput = document.getElementById('dotInput')
-    var graphviz = d3.select("#graph").graphviz()
-    .transition(function() {
-        return d3.transition().duration(500);
-    });
+    diagramInput = document.getElementById('input')
     
 function render() {
-    dotSrc = dotInput.value;
-    if (!dotSrc) {
+    src = diagramInput.value;
+    if (!src) {
         return;
     }
     if (rendering) {
@@ -86,21 +83,13 @@ function render() {
     }
 
     rendering = true;
-    d3.select("#error-message").text("");
-    graphviz
-        .onerror(handleError)
-        .renderDot(dotSrc, done);
-}
-
-function handleError(errorMessage) {
-    // d3.select("#error-message").text(errorMessage);
-    rendering = false;""
-    if (pendingUpdate) {
-        pendingUpdate = false;
-        render();
+    try{
+        mermaid.render('theGraph', src, function(svgCode) {
+            graph.innerHTML = svgCode;
+        });
+    }catch(err){
+        graph.innerHTML = "<PRE>" + src + "</PRE>";
     }
-}    
-function done() {
     rendering = false;
     if (pendingUpdate) {
         pendingUpdate = false;

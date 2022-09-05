@@ -1,8 +1,9 @@
 <%def name="title()">FTC16072 Entries - ${pageTitle}</%def>
 <%def name="head()">
-<script src="https://d3js.org/d3.v5.min.js"></script>
-<script src="https://unpkg.com/@hpcc-js/wasm@0.3.11/dist/index.min.js"></script>
-<script src="https://unpkg.com/d3-graphviz@3.0.5/build/d3-graphviz.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script>
+    mermaid.initialize({ startOnLoad: true });
+</script>
 </%def>
 <%inherit file = "base.mako"/>
     % if destination == "Screen":
@@ -61,8 +62,8 @@
                                    photos.append(f"<IMG SRC='{entry.photoLink}' ALT='Photo'/>")
                             if entry.notes:
                                 notes.append(entry.memberName + ": " + entry.notes)
-                            if entry.diagramDot:
-                                diagrams.append(entry.diagramDot)
+                            if entry.diagram:
+                                diagrams.append(entry.diagram)
                     %>
             <td><UL>
                <LI>Accomplished
@@ -103,13 +104,9 @@
                     diagramIndex = diagramIndex + 1
                   %>
                   %for diagram in diagrams:
-                    <div class="diagram" id="diagram-${diagramIndex}-${loop.index}"></div>
-                    <script type="text/javascript">
-                        <%
-                        jsDiagram = diagram.replace('\\', '\\\\').replace("\r", " ").replace("\n", "\\n").replace("'", "\\'").replace('"', '\\"')
-                        %> 
-                        d3.select("#diagram-${diagramIndex}-${loop.index}").graphviz().renderDot("${jsDiagram|n}");
-                    </script>
+                    <div class="diagram mermaid" id="diagram-${diagramIndex}-${loop.index}">
+                        ${diagram|n}
+                    </div>
                   %endfor
                 </li>
                %endif
