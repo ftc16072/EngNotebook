@@ -36,8 +36,6 @@
                     <%
                         teamMembers = []
                         accomplished = []
-                        why = []
-                        learned = []
                         nextSteps = []
                         notes = []
                         photos = []
@@ -78,12 +76,6 @@
                             %endif
                         </UL></LI>
                     %endfor
-               </UL></LI>
-               <LI>Learning
-               <UL>
-                 %for item in learned:
-                        <LI>${item} </LI>
-                 %endfor
                </UL></LI>
                <LI>Next Steps
                <UL>

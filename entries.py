@@ -61,13 +61,13 @@ class Entries():
         dbConnection.execute('PRAGMA schema_version = ' + str(SCHEMA_VERSION))
 
     def addEntry(self, dbConnection, date, taskId, memberId, hours,
-                 accomplished, why, learned, nextSteps, notes, diagram,
-                 photo, smugmugConfig):
+                 accomplished, nextSteps, notes, diagram, photo,
+                 smugmugConfig):
 
         dbConnection.execute(
-            "Insert INTO Entries (date, task_id, member_id, hours,accomplished, why, learned, next_steps, notes, diagram, imgKey) VALUES (?,?,?,?,?,?,?,?,?,?,?)",
-            (date, taskId, memberId, hours, accomplished, why, learned,
-             nextSteps, notes, diagram, photo))
+            "Insert INTO Entries (date, task_id, member_id, hours,accomplished, next_steps, notes, diagram, imgKey) VALUES (?,?,?,?,?,?,?,?,?)",
+            (date, taskId, memberId, hours, accomplished, nextSteps, notes,
+             diagram, photo))
 
     def migrate(self, dbConnection, dbSchemaVersion):
         if dbSchemaVersion > SCHEMA_VERSION:
@@ -81,7 +81,8 @@ class Entries():
         if dbSchemaVersion < 8:
             dbConnection.execute("ALTER TABLE Entries ADD hours REAL ")
         if dbSchemaVersion < 9:
-            dbConnection.execute("ALTER TABLE Entries RENAME COLUMN diagramDot TO diagram")
+            dbConnection.execute(
+                "ALTER TABLE Entries RENAME COLUMN diagramDot TO diagram")
 
         self.tasks.migrate(dbConnection, dbSchemaVersion)
         self.members.migrate(dbConnection, dbSchemaVersion)

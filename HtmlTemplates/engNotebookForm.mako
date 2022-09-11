@@ -35,14 +35,6 @@
     <br/>
     <textarea name="accomplished" rows="5" cols="30"></textarea>
     <br/>
-    <label for="why"> Why did you do that? </label>
-    <br/>
-    <textarea name="why" rows="5" cols="30"></textarea>
-    <br/>
-    <label for="learning">What did you learn?</label>
-    <br/>
-    <textarea name="learning" rows="5" cols="30"></textarea>
-    <br/>
     <label for="next_steps">Next Steps?</label>
     <br/>
     <textarea name="next_steps" rows="5" cols="30"></textarea>
