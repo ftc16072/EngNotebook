@@ -110,8 +110,8 @@ class FtcNotebook(object):
                              tasks=taskList)
 
     @cherrypy.expose
-    def addEntry(self, dateString, memberId, taskId, hours, accomplished, why,
-                 learning, next_steps, notes, diagram, photo):
+    def addEntry(self, dateString, memberId, taskId, hours, accomplished,
+                 next_steps, notes, diagram, photo):
         user = self.getUser()
         if not user:
             return self.show_loginpage('')
@@ -124,9 +124,9 @@ class FtcNotebook(object):
             else:
                 imgKey = ""
             user.team.entries.addEntry(connection, dateString, taskId,
-                                       memberId, hours, accomplished, why,
-                                       learning, next_steps, notes, diagram,
-                                       imgKey, smugmugConfig)
+                                       memberId, hours, accomplished,
+                                       next_steps, notes, diagram, imgKey,
+                                       smugmugConfig)
 
         return self.newEntry()
 
