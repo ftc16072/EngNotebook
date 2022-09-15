@@ -40,6 +40,7 @@
                         notes = []
                         photos = []
                         diagrams = []
+                        why = []
                         for entry in entries:
                             if entries.index(entry) == len(entries) - 1:
                                 comma = " "
@@ -48,7 +49,8 @@
                             teamMembers.append(entry.memberName + comma)
                             if entry.accomplished:
                                 accomplished.append(entry.memberName + ": " + entry.accomplished + comma)
-                            why.append(entry.why)
+                            if entry.why:
+                                why.append(entry.why)
                             if entry.learned:
                                 learned.append(entry.memberName + ": " + entry.learned + comma)
                             if entry.nextSteps:
