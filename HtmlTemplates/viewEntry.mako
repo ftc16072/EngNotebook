@@ -49,8 +49,7 @@
                             teamMembers.append(entry.memberName + comma)
                             if entry.accomplished:
                                 accomplished.append(entry.memberName + ": " + entry.accomplished + comma)
-                            if entry.why:
-                                why.append(entry.why)
+                            why.append(entry.why)
                             if entry.learned:
                                 learned.append(entry.memberName + ": " + entry.learned + comma)
                             if entry.nextSteps:
